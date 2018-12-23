@@ -96,16 +96,12 @@ try:
 							
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
 				if any(FILTER in XML_FILE for FILTER in FILTERSTR):
-					i = 1
-					print(u"      \033[1m\033[93m\u26a0 \033[93mFILTERED\033[0m\033[1m " + str(i).zfill(2) + ".\033[0m " + XML_FILE)[:101] + " ..."
-					i += 1
+					print(u"      \033[1m\033[93m\u26a0 \033[93mFILTERED\033[0m : " + XML_FILE)[:93] + " ..."
 					continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML
 				if XML_MAGN == "":
-					i = 1
-					print(u"      \033[1m\033[91m\u2716 \033[93mNO MAGNET URI\033[0m\033[1m " + str(i).zfill(2) + ".\033[0m " + XML_FILE)[:101] + " ..."
-					i += 1
+					print(u"      \033[1m\033[91m\u2716 \033[93mNO MAGNET URI\033[0m " + XML_FILE)[:93] + " ..."
 					continue
 				
 				###  Check for existing TORRENT HASHES
