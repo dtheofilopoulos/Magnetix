@@ -17,8 +17,7 @@ TOR_WRITE = "YES"					# Write Torrent DB magnet URIs     [YES|NO]
 LOG_WRITE = "YES"					# Write downloaded torrents log    [YES|NO]
 FILTERSTR = ("480p","720p","1080p",".avi$","iP.WEB-DL")	# Do NOT download FILENAMES w/ these tags
 
-
-###  DEFINE VARIABLES
+###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
 TORRENT_DB = []
 HISTORYLOG = []
