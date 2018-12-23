@@ -58,7 +58,7 @@ try:
 			print(u"     \033[1m\033[93m \u26a0 ADD\033[0m TV series titles, separated by a new line (e.g. Family Guy)\n")
 	LIST.close()
 	print(u"")
-	
+	### need to revisit this bit of code at some point...
 	if (WATCHSIZE == "1"):
 		print(os.popen("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74").read())
 	
