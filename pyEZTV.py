@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf8
-import os.path,time,urllib2,feedparser
+import os.path,subprocess,time,urllib2,feedparser
 
 ###  Created by Dio Theofilopoulos ( classicrocker384@gmail.com )  ################################
 
@@ -45,17 +45,19 @@ if CLEANHASH == "YES":
 ###  Check the WATCHLIST making TITLES lowercase for easier comparison
 try:
 	LIST = open(WATCHLIST, "r")
+	
 	for SERIES in LIST:
 		SERIES = SERIES.strip()
 		if len(SERIES):
 			TVSERIESDB.append(SERIES.lower())
+		
 	LIST.close()
 	
 	###  Print the WATCHLIST
 	print(u"\n :::  \033[1mTV SERIES WATCHLIST\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
 
 	if (os.path.getsize(WATCHLIST) > 0):
-		print(os.popen("more -scfl " + WATCHLIST + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74").read())
+		print(os.popen("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74").read())
 	else:
 		print(u"     \033[1m\033[93m \u26a0 \033[0m" + WATCHLIST + " is \033[1m\033[93mEMPTY\033[0m")
 		print(u"     \033[1m\033[93m \u26a0 ADD\033[0m TV series titles, separated by a new line (e.g. Family Guy)\n")
@@ -102,7 +104,7 @@ try:
 				###  in the off-chance that NO MAGNET URI in the XML
 				if XML_MAGN == "":
 					i = 1
-					print(u"      \033[1m\033[91m\u2716\033[0m \033[93m\033[1mNO\033[0m\033[1m MAGNET URI [" + str(i).zfill(2) + "]\033[0m: " + XMLTITLE)[:96] + " ..."
+					print(u"      \033[1m\033[91m\u2716\033[0m \033[93m\033[1mNO\033[0m\033[1m MAGNET URI [" + str(i).zfill(2) + "]\033[0m: " + XML_FILE)[:109] + " ..."
 					i += 1
 					continue
 				
