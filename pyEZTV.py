@@ -105,7 +105,7 @@ try:
 					print(u"      \033[1m\033[91m\u2716 \033[93mNO MAGNET URI\033[0m " + XML_FILE)[:93] + " ..."
 					continue
 				
-				###  Check for existing TORRENT HASHES
+				###  Load historical hashes
 				HISTORY = open(HASHESLOG, "r")
 				for HASH in HISTORY:
 					HASH = HASH.strip()
@@ -113,7 +113,7 @@ try:
 						HISTORYLOG.append(HASH)
 				HISTORY.close()
 				
-				###  CHECK THE HISTORY LOG FOR EXISTING HASHES
+				###  Check the HISTORY LOG for already downloaded torrents
 				if XML_HASH in HISTORYLOG:
 					continue
 				else:
