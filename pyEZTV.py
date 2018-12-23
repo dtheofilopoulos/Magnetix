@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf8
-import os.path,subprocess,time,urllib2,feedparser
+import os.path,time,urllib2,feedparser
 
 ###  Created by Dio Theofilopoulos ( classicrocker384@gmail.com )  ################################
 
