@@ -41,10 +41,10 @@ if CLEANHASH == "YES":
 		print(u"     \033[1m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[1mCREATED\033[0m\n")
 
 
-try:
-	###  Print the WATCHLIST
-	print(u"\n :::  \033[1mTV SERIES WATCHLIST\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
+###  Print the WATCHLIST
+print(u"\n :::  \033[1mTV SERIES WATCHLIST\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
 
+try:
 	LIST = open(WATCHLIST, "r")
 	
 	for SERIES in sorted(LIST):
