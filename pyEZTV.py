@@ -82,13 +82,14 @@ except:
 
 try:
 	for XMLENTRY in XML_PARSED:
+		
+		###  FETCH RSS VARIABLES
+		XMLTITLE = str(XMLENTRY.title)
+		XML_FILE = str(XMLENTRY.torrent_filename)
+		XML_HASH = str(XMLENTRY.torrent_infohash)
+		XML_MAGN = str(XMLENTRY.torrent_magneturi)			
+
 		for SERIES in TVSERIESDB:
-			
-			###  FETCH RSS VARIABLES
-			XMLTITLE = str(XMLENTRY.title)
-			XML_FILE = str(XMLENTRY.torrent_filename)
-			XML_HASH = str(XMLENTRY.torrent_infohash)
-			XML_MAGN = str(XMLENTRY.torrent_magneturi)
 			
 			###  make EZTV SERIES TITLES lowercase for easier comparison
 			if SERIES.lower() in XMLTITLE.lower():
