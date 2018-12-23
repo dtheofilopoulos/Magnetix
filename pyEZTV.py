@@ -43,7 +43,6 @@ if CLEANHASH == "YES":
 
 ###  Print the WATCHLIST
 print(u"\n :::  \033[1mTV SERIES WATCHLIST\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
-
 try:
 	LIST = open(WATCHLIST, "r")
 	
