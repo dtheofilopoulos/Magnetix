@@ -41,7 +41,6 @@ if CLEANHASH == "YES":
 		print(u"     \033[1m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[1mCREATED\033[0m\n")
 
 
-###  Check the WATCHLIST making TITLES lowercase for easier comparison
 try:
 	###  Print the WATCHLIST
 	print(u"\n :::  \033[1mTV SERIES WATCHLIST\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
@@ -53,6 +52,7 @@ try:
 		if len(SERIES):
 			WATCHSIZE="1"
 			#print("      " + SERIES)
+			###  Make the TITLES lowercase for easier comparison
 			TVSERIESDB.append(SERIES.lower())
 		else:
 			print(u"     \033[1m\033[93m \u26a0 \033[0m" + WATCHLIST + " is \033[1m\033[93mEMPTY\033[0m")
