@@ -10,12 +10,6 @@ WATCHLIST = DIRECTORY + "series.db"			# TV SERIES watchlist
 TORRENTDB = DIRECTORY + "torrent.db"			# Matched torrents database w/ magnet links
 HASHESLOG = DIRECTORY + "torrent.log"			# History log of matched torrents w/ hashes
 
-###  TRANSMISSION DAEMON  #########################################################################
-TR_HOST="192.168.2.100"
-TR_PORT="9091"
-USERNAME="transmission"
-PASSWORD="jeltzpass"
-
 ###  SETTINGS  ####################################################################################
 RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
 CLEANHASH = "YES"					# Clean hashes after 2 days        [YES|NO]
