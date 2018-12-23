@@ -10,6 +10,12 @@ WATCHLIST = DIRECTORY + "series.db"			# TV SERIES watchlist
 TORRENTDB = DIRECTORY + "torrent.db"			# Matched torrents database w/ magnet links
 HASHESLOG = DIRECTORY + "torrent.log"			# History log of matched torrents w/ hashes
 
+###  TRANSMISSION DAEMON  #########################################################################
+TR_HOST="192.168.2.100"
+TR_PORT="9091"
+USERNAME="transmission"
+PASSWORD="jeltzpass"
+
 ###  SETTINGS  ####################################################################################
 RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
 CLEANHASH = "YES"					# Clean hashes after 2 days        [YES|NO]
@@ -97,14 +103,14 @@ try:
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
 				if any(FILTER in XML_FILE for FILTER in FILTERSTR):
 					i = 1
-					print(u"      \033[1m\033[93m\u26a0\033[0m \033[1mFILTERED [" + str(i).zfill(2) + "]\033[0m: " + XML_FILE)[:96] + " ..."
+					print(u"      \033[1m\033[93m\u26a0 \033[93mFILTERED\033[0m\033[1m " + str(i).zfill(2) + ".\033[0m " + XML_FILE)[:101] + " ..."
 					i += 1
 					continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML
 				if XML_MAGN == "":
 					i = 1
-					print(u"      \033[1m\033[91m\u2716\033[0m \033[93m\033[1mNO\033[0m\033[1m MAGNET URI [" + str(i).zfill(2) + "]\033[0m: " + XML_FILE)[:109] + " ..."
+					print(u"      \033[1m\033[91m\u2716 \033[93mNO MAGNET URI\033[0m\033[1m " + str(i).zfill(2) + ".\033[0m " + XML_FILE)[:101] + " ..."
 					i += 1
 					continue
 				
@@ -170,13 +176,13 @@ try:
 			print(u"      \033[1m" + str(i).zfill(2) + "\033[0m. " + RESULT)
 			i += 1
 	else:
-		print(u"\n     \033[1m\033[93m \u26a0 NO \033[0m\033[1mTORRENTS\033[0m match your TV series watchlist\n")
+		print(u"\n     \033[1m\033[93m \u26a0 NO \033[0m\033[1mTORRENTS\033[0m match your TV series watchlist")
 
 except:
-	print(u"     \033[1m\033[91m \u2716 ERROR\033[0m: CANNOT match torrents.\n")
+	print(u"     \033[1m\033[91m \u2716 ERROR\033[0m: CANNOT match torrents.")
 
 ### QUIT EVERYTHING, JUST IN CASE
-quit(u"")
+quit(u"\n")
 
 #
 # EOF
