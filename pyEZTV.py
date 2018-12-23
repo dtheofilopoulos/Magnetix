@@ -43,23 +43,25 @@ if CLEANHASH == "YES":
 
 ###  Check the WATCHLIST making TITLES lowercase for easier comparison
 try:
-	LIST = open(WATCHLIST, "r")
-	
-	for SERIES in LIST:
-		SERIES = SERIES.strip()
-		if len(SERIES):
-			TVSERIESDB.append(SERIES.lower())
-		
-	LIST.close()
-	
 	###  Print the WATCHLIST
 	print(u"\n :::  \033[1mTV SERIES WATCHLIST\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
 
-	if (os.path.getsize(WATCHLIST) > 0):
+	LIST = open(WATCHLIST, "r")
+	
+	for SERIES in sorted(LIST):
+		SERIES = SERIES.strip()
+		if len(SERIES):
+			WATCHSIZE="1"
+			#print("      " + SERIES)
+			TVSERIESDB.append(SERIES.lower())
+		else:
+			print(u"     \033[1m\033[93m \u26a0 \033[0m" + WATCHLIST + " is \033[1m\033[93mEMPTY\033[0m")
+			print(u"     \033[1m\033[93m \u26a0 ADD\033[0m TV series titles, separated by a new line (e.g. Family Guy)\n")
+	LIST.close()
+	print(u"")
+	
+	if (WATCHSIZE == "1"):
 		print(os.popen("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74").read())
-	else:
-		print(u"     \033[1m\033[93m \u26a0 \033[0m" + WATCHLIST + " is \033[1m\033[93mEMPTY\033[0m")
-		print(u"     \033[1m\033[93m \u26a0 ADD\033[0m TV series titles, separated by a new line (e.g. Family Guy)\n")
 	
 except IOError:
 	print(u"     \033[1m\033[91m \u2716 \033[0m" + WATCHLIST + " was \033[1m\033[91mNOT ACCESSIBLE\033[0m")
