@@ -34,7 +34,7 @@ if CLEANHASH == "YES":
 			
 			open(HASHESLOG, "w").close()
 			print(u"     \033[1m\033[93m \u26a0 \033[0m" + HASHESLOG + " was \033[1mTRUNCATED\033[0m")
-	
+		
 	except:
 		print(u"     \033[1m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[1m\033[91mNOT ACCESSIBLE\033[0m")
 		open(HASHESLOG, "w").close()
@@ -42,7 +42,7 @@ if CLEANHASH == "YES":
 
 
 ###  Print the WATCHLIST
-print(u"\n :::  \033[1mTV SERIES WATCHLIST\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
+print(u" :::  \033[1mTV SERIES WATCHLIST\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::")
 try:
 	LIST = open(WATCHLIST, "r")
 	
@@ -50,7 +50,8 @@ try:
 		SERIES = SERIES.strip()
 		if len(SERIES):
 			WATCHSIZE="1"
-			#print("      " + SERIES)
+			#print(u"      " + SERIES)
+			
 			###  Make the TITLES lowercase for easier comparison
 			TVSERIESDB.append(SERIES.lower())
 		else:
@@ -59,12 +60,12 @@ try:
 	LIST.close()
 	print(u"")
 	### need to revisit this bit of code at some point...
-	if (WATCHSIZE == "1"):
+	if (WATCHSIZE):
 		print(os.popen("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74").read())
 	
 except IOError:
 	print(u"     \033[1m\033[91m \u2716 \033[0m" + WATCHLIST + " was \033[1m\033[91mNOT ACCESSIBLE\033[0m")
-	open(WATCHLIST, "w").close()
+	#open(WATCHLIST, "w").close()
 	print(u"     \033[1m\033[91m \u2716 \033[0m" + WATCHLIST + " was \033[1mCREATED\033[0m")
 
 
@@ -89,12 +90,12 @@ try:
 		XML_FILE = str(XMLENTRY.torrent_filename)
 		XML_HASH = str(XMLENTRY.torrent_infohash)
 		XML_MAGN = str(XMLENTRY.torrent_magneturi)			
-
+		
 		for SERIES in TVSERIESDB:
 			
 			###  make EZTV SERIES TITLES lowercase for easier comparison
 			if SERIES.lower() in XMLTITLE.lower():
-							
+				
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
 				if any(FILTER in XML_FILE for FILTER in FILTERSTR):
 					print(u"      \033[1m\033[93m\u26a0 \033[93mFILTERED\033[0m : " + XML_FILE)[:93] + " ..."
@@ -102,7 +103,7 @@ try:
 				
 				###  in the off-chance that NO MAGNET URI in the XML
 				if XML_MAGN == "":
-					print(u"      \033[1m\033[91m\u2716 \033[93mNO MAGNET URI\033[0m " + XML_FILE)[:93] + " ..."
+					print(u"      \033[1m\033[91m\u2716 \033[93mNO MAGNET URI\033[0m : " + XML_FILE)[:95] + " ..."
 					continue
 				
 				###  Load historical hashes
@@ -166,8 +167,9 @@ try:
 		for RESULT in LOGRESULTS:
 			print(u"      \033[1m" + str(i).zfill(2) + "\033[0m. " + RESULT)
 			i += 1
+		print(u"")
 	else:
-		print(u"\n     \033[1m\033[93m \u26a0 NO \033[0m\033[1mTORRENTS\033[0m match your TV series watchlist")
+		print(u"     \033[1m\033[93m \u26a0 NO \033[0m\033[1mTORRENTS\033[0m match your TV series watchlist")
 
 except:
 	print(u"     \033[1m\033[91m \u2716 ERROR\033[0m: CANNOT match torrents.")
