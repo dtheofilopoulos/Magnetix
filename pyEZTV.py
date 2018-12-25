@@ -2,12 +2,15 @@
 # coding=utf8
 import os.path,time,urllib2,feedparser
 
+os.system("cls || clear")
+
 ###  CREDITS  #####################################################################################
 MODTIME=os.path.getmtime(__file__)
 PRONAME=os.path.basename(__file__)
 VERSION="v4.4"
 
-print(u"\n \033[01m" + PRONAME + ", " + VERSION + """ \033[0m| EZTV Torrent Downloader
+print(u"""
+ \033[01m""" + PRONAME + """, """ + VERSION + """ \033[0m| EZTV Torrent Downloader
 
 	Downloads matching TV Series titles as soon as they air on eztv
 
