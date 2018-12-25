@@ -2,7 +2,7 @@
 # coding=utf8
 import os.path,time,urllib2,feedparser
 
-os.system("cls || clear")
+os.system("clear")
 
 ###  CREDITS  #####################################################################################
 MODTIME=os.path.getmtime(__file__)
