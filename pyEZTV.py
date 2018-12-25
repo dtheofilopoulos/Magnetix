@@ -2,7 +2,20 @@
 # coding=utf8
 import os.path,time,urllib2,feedparser
 
-###  Created by Dio Theofilopoulos ( classicrocker384@gmail.com )  ################################
+###  CREDITS  #####################################################################################
+MODTIME=os.path.getmtime(__file__)
+PRONAME=os.path.basename(__file__)
+VERSION="v4.4"
+
+print(u"\n \033[01m" + PRONAME + ", " + VERSION + """ \033[0m| EZTV Torrent Downloader
+
+	Downloads matching TV Series titles as soon as they air on eztv
+
+	License  | Dio ( classicrocker384@gmail.com ), 3-Clause BSD License
+	Revision | """ + str(time.strftime('%d/%m/%Y, %H:%M', time.localtime(MODTIME))) + """
+	
+ ------------------------------------------------------------------------------
+""")
 
 ###  CONFIGURATION  ###############################################################################
 DIRECTORY = os.path.dirname(__file__) + "/"		# Absolute PATH of working directory
@@ -12,9 +25,9 @@ HASHESLOG = DIRECTORY + "torrent.log"			# History log of matched torrents w/ has
 
 ###  SETTINGS  ####################################################################################
 RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
-CLEANHASH = "YES"					# Clean hashes after 2 days        [YES|NO]
-TOR_WRITE = "YES"					# Write Torrent DB magnet URIs     [YES|NO]
-LOG_WRITE = "YES"					# Write downloaded torrents log    [YES|NO]
+TOR_WRITE = "YES"					# Keep magnet URIs in Torrent DB   [YES|NO]
+LOG_WRITE = "YES"					# Keep torrents in history log     [YES|NO]
+DAYS2KEEP = "2"						# Clean history log after x days
 FILTERSTR = ("480p","720p","1080p",".avi$","iP.WEB-DL")	# Do NOT download FILENAMES w/ these tags
 
 ###  DEFINE VARIABLES  ############################################################################
@@ -24,25 +37,25 @@ HISTORYLOG = []
 TORRENTSDT = {}
 
 
-###  if HASHESLOG has not been modified for more than 2 days, start CLEAN
-if CLEANHASH == "YES":
+###  if HASHESLOG has not been modified for more than x days, start CLEAN
+if LOG_WRITE == "YES":
 	try:
 		CUR_TIME = time.time()
 		MOD_TIME = os.path.getmtime(HASHESLOG)
 	
-		if (CUR_TIME - MOD_TIME >= 2 * 24 * 3600):
+		if (CUR_TIME - MOD_TIME >= DAYS2KEEP * 24 * 3600):
 			
 			open(HASHESLOG, "w").close()
-			print(u"     \033[1m\033[93m \u26a0 \033[0m" + HASHESLOG + " was \033[1mTRUNCATED\033[0m")
+			print(u"     \033[01m\033[93m \u26a0 \033[0m" + HASHESLOG + " was \033[01mTRUNCATED\033[0m")
 		
 	except:
-		print(u"     \033[1m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[1m\033[91mNOT ACCESSIBLE\033[0m")
+		print(u"     \033[01m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[01m\033[91mNOT ACCESSIBLE\033[0m")
 		open(HASHESLOG, "w").close()
-		print(u"     \033[1m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[1mCREATED\033[0m\n")
+		print(u"     \033[01m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[01mCREATED\033[0m\n")
 
 
 ###  Print the WATCHLIST
-print(u" :::  \033[1mTV SERIES WATCHLIST\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::")
+print(u" :::  \033[01mTV SERIES WATCHLIST\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::")
 try:
 	LIST = open(WATCHLIST, "r")
 	
@@ -55,8 +68,8 @@ try:
 			###  Make the TITLES lowercase for easier comparison
 			TVSERIESDB.append(SERIES.lower())
 		else:
-			print(u"     \033[1m\033[93m \u26a0 \033[0m" + WATCHLIST + " is \033[1m\033[93mEMPTY\033[0m")
-			print(u"     \033[1m\033[93m \u26a0 ADD\033[0m TV series titles, separated by a new line (e.g. Family Guy)\n")
+			print(u"     \033[01m\033[93m \u26a0 \033[0m" + WATCHLIST + " is \033[01m\033[93mEMPTY\033[0m")
+			print(u"     \033[01m\033[93m \u26a0 ADD\033[0m TV series titles, separated by a new line (e.g. Family Guy)\n")
 	LIST.close()
 	print(u"")
 	### need to revisit this bit of code at some point...
@@ -64,12 +77,12 @@ try:
 		print(os.popen("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74").read())
 	
 except IOError:
-	print(u"     \033[1m\033[91m \u2716 \033[0m" + WATCHLIST + " was \033[1m\033[91mNOT ACCESSIBLE\033[0m")
+	print(u"     \033[01m\033[91m \u2716 \033[0m" + WATCHLIST + " was \033[01m\033[91mNOT ACCESSIBLE\033[0m")
 	#open(WATCHLIST, "w").close()
-	print(u"     \033[1m\033[91m \u2716 \033[0m" + WATCHLIST + " was \033[1mCREATED\033[0m")
+	print(u"     \033[01m\033[91m \u2716 \033[0m" + WATCHLIST + " was \033[01mCREATED\033[0m")
 
 
-print(u"\n :::  \033[1mTV SERIES MATCHES\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
+print(u"\n :::  \033[01mTV SERIES MATCHES\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
 ###  Check the EZTV RSS2.0 URI and parse the XML
 try:
 	URIHEADER = { "User-Agent": "Links (2.7; Linux; text)", "Content-Type": "text/xml", "pragma-directive": "no-cache" }
@@ -79,7 +92,7 @@ try:
 	XML_PARSED = feedparser.parse(XML).entries[:50]
 	
 except:
-	print(u"     \033[1m\033[91m \u2716 \033[0m\033[1mHTTP STATUS \033[91m408\033[0m for URI \033[1m" + str(RSSXMLURI) + "\033[0m")
+	print(u"     \033[01m\033[91m \u2716 \033[0m\033[01mHTTP STATUS \033[91m408\033[0m for URI \033[01m" + str(RSSXMLURI) + "\033[0m")
 
 
 try:
@@ -98,12 +111,12 @@ try:
 				
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
 				if any(FILTER in XML_FILE for FILTER in FILTERSTR):
-					print(u"      \033[1m\033[93m\u26a0 \033[93mFILTERED\033[0m : " + XML_FILE)[:93] + " ..."
+					print(u"      \033[01m\033[93m\u26a0 \033[93mFILTERED\033[0m : " + XML_FILE)[:93] + " ..."
 					continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML
 				if XML_MAGN == "":
-					print(u"      \033[1m\033[91m\u2716 \033[93mNO MAGNET URI\033[0m : " + XML_FILE)[:95] + " ..."
+					print(u"      \033[01m\033[91m\u2716 \033[93mNO MAGNET URI\033[0m : " + XML_FILE)[:95] + " ..."
 					continue
 				
 				###  Load historical hashes
@@ -142,7 +155,7 @@ try:
 				MAGNETDB.close()
 			
 			except IOError:
-				quit(u"     \033[1m\033[91m \u2716 \033[0m" + TORRENTDB + " was \033[1m\033[91mNOT ACCESSIBLE\033[0m")
+				quit(u"     \033[01m\033[91m \u2716 \033[0m" + TORRENTDB + " was \033[01m\033[91mNOT ACCESSIBLE\033[0m")
 			
 			
 		### Write the HISTORY LOG. We DO NOT WANT to DOWNLOAD torrents twice
@@ -154,7 +167,7 @@ try:
 				LOGDB.close()
 			
 			except IOError:
-				quit(u"     \033[1m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[1m\033[91mNOT ACCESSIBLE\033[0m")
+				quit(u"     \033[01m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[01m\033[91mNOT ACCESSIBLE\033[0m")
 		
 		###  TITLES of TORRENT DOWNLOADS
 		LOGRESULTS.append(TORRENTSDT[TOR]["TITLE"])
@@ -162,17 +175,17 @@ try:
 
 	###  PRINT TV SERIES MATCHES
 	if LOGRESULTS:
-		print(u"\n     \033[1m\033[91m " + str(len(LOGRESULTS)) + " \033[0m\033[1mTORRENTS\033[0m match your TV series watchlist\n")
+		print(u"\n     \033[01m\033[91m " + str(len(LOGRESULTS)) + " \033[0m\033[01mTORRENTS\033[0m match your TV series watchlist\n")
 		i = 1
 		for RESULT in LOGRESULTS:
-			print(u"      \033[1m" + str(i).zfill(2) + "\033[0m. " + RESULT)
+			print(u"      \033[01m" + str(i).zfill(2) + "\033[0m. " + RESULT)
 			i += 1
 		print(u"")
 	else:
-		print(u"     \033[1m\033[93m \u26a0 NO \033[0m\033[1mTORRENTS\033[0m match your TV series watchlist")
+		print(u"     \033[01m\033[93m \u26a0 NO \033[0m\033[01mTORRENTS\033[0m match your TV series watchlist")
 
 except:
-	print(u"     \033[1m\033[91m \u2716 ERROR\033[0m: CANNOT match torrents.")
+	print(u"     \033[01m\033[91m \u2716 ERROR\033[0m: CANNOT match torrents.")
 
 ### QUIT EVERYTHING, JUST IN CASE
 quit(u"\n")
