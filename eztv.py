@@ -49,6 +49,7 @@ TVSERIESDB = []
 TORRENT_DB = []
 HISTORYLOG = []
 TORRENTSDT = {}
+WATCH_SIZE = "0"
 FILTER_SPC = "0"
 
 ###  Create data directory for the script if it does not exist
@@ -59,18 +60,17 @@ if (not os.path.exists(DIRECTORY)):
 print(u" :::  \033[01mTV SERIES WATCHLIST\033[00m  ::::::::::::::::::::::::::::::::::::::::::::::::::::")
 try:
 	LIST = open(WATCHLIST, "r")
-	WATCHSIZE = "0"
 	for SERIES in sorted(LIST):
 		SERIES = SERIES.strip()
 		if len(SERIES):
-			WATCHSIZE = "1"			
+			WATCH_SIZE = "1"			
 			###  Make the TITLES lowercase for easier comparison
 			TVSERIESDB.append(SERIES.lower())
 		LIST.close()
 	print(u"")
 	
 	### need to revisit this bit of code at some point...
-	if (WATCHSIZE == "1"):
+	if (WATCH_SIZE == "1"):
 		subprocess.call("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74",shell=True)
 	
 	else:
