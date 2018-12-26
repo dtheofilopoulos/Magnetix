@@ -11,5 +11,7 @@ Transmission remote is required for this to work. If successful, torrent.db will
 
 # Cronjob
 You can then add the script to a cronjob and let the magic happen.
+
 i.e. */5    *      *      *      *      /pathtoscript/eztv.py &>/dev/null;
+
 if you want to run the program every five minutes.
