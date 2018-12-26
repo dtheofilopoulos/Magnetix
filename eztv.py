@@ -31,8 +31,8 @@ TORRENTDB = DIRECTORY + "torrent.db"			# Matched torrents database w/ magnet lin
 
 ###  SETTINGS  ####################################################################################
 RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
-TOR_WRITE = "OFF"					# Keep magnet URIs in Torrent DB   [ON|OFF]
-LOG_WRITE = "OFF"					# Keep torrents in history log     [ON|OFF]
+TOR_WRITE = "ON"					# Keep magnet URIs in Torrent DB   [ON|OFF]
+LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
 DAYS2KEEP = "2"						# Clean history log after x days
 FILTER_TR = "ON"					# Activate filter (needs FILTERSTR)[ON|OFF]
 FILTERSTR = "480p, 720p, 1080p, .avi$, iP.WEB-DL"	# Do NOT download FILENAMES w/ these tags
@@ -75,13 +75,13 @@ try:
 	
 	else:
 		print(u"     \033[01m\033[93m \u26a0 \033[00m" + WATCHLIST + " is \033[01m\033[93mEMPTY\033[00m")
-		print(u"     \033[01m\033[93m \u26a0 ADD\033[00m TV series titles, separated by a new line (e.g. Family Guy)\n")
+		print(u"     \033[01m\033[93m \u26a0 ADD\033[00m TV series titles, separated by a new line (e.g. Family Guy)")
 	print(u"")
 	
 except IOError:
-	print(u"     \033[01m\033[91m \u2716 \033[00m" + WATCHLIST + " was \033[01m\033[91mNOT ACCESSIBLE\033[00m")
+	print(u"\n     \033[01m\033[91m \u2716 \033[00m" + WATCHLIST + " was \033[01m\033[91mNOT ACCESSIBLE\033[00m")
 	open(WATCHLIST, "w").close()
-	print(u"     \033[01m\033[91m \u2716 \033[00m" + WATCHLIST + " was \033[01mCREATED\033[00m")
+	print(u"     \033[01m\033[91m \u2716 \033[00m" + WATCHLIST + " was \033[01mCREATED\033[00m\n")
 
 
 ###  if HASHESLOG has not been modified for more than x days, start CLEAN
@@ -239,7 +239,7 @@ if (ADDMAGNET == "ON"):
 				print(u"     \033[01m TORRENTS \033[91mADDED\033[00m to \033[01mTransmission BT Daemon\033[00m")	
 		
 		except:
-			quit(u"     \033[01m\033[91m \u2716 \033[00mCould NOT connect to Transmission. Check RPC configuration.")
+			quit(u"     \033[01m\033[91m \u2716 \033[00mCould NOT connect to Transmission. Check RPC configuration.\n")
 
 ### QUIT EVERYTHING, JUST IN CASE
 quit(u"\n")
