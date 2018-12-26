@@ -39,10 +39,10 @@ FILTERSTR = "480p, 720p, 1080p, .avi$, iP.WEB-DL"	# Do NOT download FILENAMES w/
 
 ### TRANSMISSION DAEMON ###########################################################################
 ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
-TRAN_HOST="192.168.2.100"				# Transmission Daemon Host
-TRAN_PORT="9091"					# Transmission Daemon Port
-USERNAME="transmission username"			# Transmission Daemon Username
-PASSWORD="transmission password"			# Transmission Daemon Password
+TRAN_HOST = "192.168.2.100"				# Transmission Daemon Host
+TRAN_PORT = "9091"					# Transmission Daemon Port
+USERNAME = "transmission username"			# Transmission Daemon Username
+PASSWORD = "transmission password"			# Transmission Daemon Password
 
 ###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
