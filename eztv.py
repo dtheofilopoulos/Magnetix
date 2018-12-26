@@ -17,7 +17,7 @@ print(u"""
 
 	License  | Dio ( classicrocker384@gmail.com ), 3-Clause BSD License
 	Revision | """ + str(time.strftime('%d/%m/%Y, %H:%M', time.localtime(MODTIME))) + """
-	Depends  | transmission-remote, 
+	Depends  | transmission-remote,
 	           os.path, subprocess, time, urllib2, feedparser
 	
  ------------------------------------------------------------------------------
@@ -31,18 +31,18 @@ HASHESLOG = DIRECTORY + "torrent.log"			# History log of matched torrents w/ has
 
 ###  SETTINGS  ####################################################################################
 RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
-TOR_WRITE = "YES"					# Keep magnet URIs in Torrent DB   [YES|NO]
-LOG_WRITE = "YES"					# Keep torrents in history log     [YES|NO]
+TOR_WRITE = "ON"					# Keep magnet URIs in Torrent DB   [ON|OFF]
+LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
 DAYS2KEEP = "2"						# Clean history log after x days
-FILTER_ON = "YES"					# Activate filter (needs FILTERSTR)[YES|NO]
+FILTER_ON = "ON"					# Activate filter (needs FILTERSTR)[ON|OFF]
 FILTERSTR = "480p, 720p, 1080p, .avi$, iP.WEB-DL"	# Do NOT download FILENAMES w/ these tags
 
 ### TRANSMISSION DAEMON ###########################################################################
-ADDMAGNET = "YES"					# Add magnet URIs to transmission  [YES|NO]
-TR_HOST="192.168.2.100"
-TR_PORT="9091"
-USERNAME="transmission username"
-PASSWORD="transmission password"
+ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
+TRAN_HOST="192.168.2.100"				# Transmission Daemon Host
+TRAN_PORT="9091"					# Transmission Daemon Port
+USERNAME="transmission username"			# Transmission Daemon Username
+PASSWORD="transmission password"			# Transmission Daemon Password
 
 ###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
@@ -52,9 +52,9 @@ TORRENTSDT = {}
 
 if not os.path.exists(DIRECTORY):
 	os.makedirs(DIRECTORY)
-	
+
 ###  if HASHESLOG has not been modified for more than x days, start CLEAN
-if LOG_WRITE == "YES":
+if LOG_WRITE == "ON":
 	try:
 		CUR_TIME = time.time()
 		MOD_TIME = os.path.getmtime(HASHESLOG)
@@ -93,7 +93,7 @@ try:
 	
 except IOError:
 	print(u"     \033[01m\033[91m \u2716 \033[00m" + WATCHLIST + " was \033[01m\033[91mNOT ACCESSIBLE\033[00m")
-	#open(WATCHLIST, "w").close()
+	open(WATCHLIST, "w").close()
 	print(u"     \033[01m\033[91m \u2716 \033[00m" + WATCHLIST + " was \033[01mCREATED\033[00m")
 
 
@@ -125,7 +125,7 @@ try:
 			if SERIES.lower() in XMLTITLE.lower():
 				
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
-				if FILTER_ON == "YES":
+				if FILTER_ON == "ON":
 					if any(FILTER in XML_FILE for FILTER in FILTERSTR):
 						print(u"      \033[01m\033[93m\u26a0 \033[93mFILTERED\033[00m : " + XML_FILE)[:95] + " ..."
 						continue
@@ -163,7 +163,7 @@ try:
 	LOGRESULTS = []
 	for TOR in TORRENTSDT:
 		### Write the TORRENT LOG. Append MAGNET URIs for MATCHED TORRENTS
-		if TOR_WRITE == "YES":
+		if TOR_WRITE == "ON":
 			try:
 				MAGNETDB = open(TORRENTDB, "w")
 				for MAGNETURI in TORRENT_DB:
@@ -171,11 +171,11 @@ try:
 				MAGNETDB.close()
 			
 			except IOError:
-				quit(u"     \033[01m\033[91m \u2716 \033[00m" + TORRENTDB + " was \033[01m\033[91mNOT ACCESSIBLE\033[00m")
+				quit(u"     \033[01m\033[91m \u2716 \033[00m" + TORRENTDB + " was \033[01m\033[91mNOTT ACCESSIBLE\033[00m")
 			
 			
 		### Write the HISTORY LOG. We DO NOT WANT to DOWNLOAD torrents twice
-		if LOG_WRITE == "YES":
+		if LOG_WRITE == "ON":
 			try:
 				LOGDB = open(HASHESLOG, "w")
 				for HASH in HISTORYLOG:
@@ -190,7 +190,7 @@ try:
 		
 
 	###  PRINT TV SERIES MATCHES
-	if FILTER_ON == "YES":
+	if FILTER_ON == "ON":
 		print(u"")
 	
 	if LOGRESULTS:
@@ -205,29 +205,29 @@ try:
 
 
 except:
-	print(u"     \033[01m\033[91m \u2716 ERROR\033[00m: CANNOT match torrents.")
+	print(u"     \033[01m\033[91m \u2716 CANNOT\033[00m\033[01m match torrents\033[00m")
 
 
 ###  TRANSMISSION REMOTE
-if ADDMAGNET == "YES":
+if ADDMAGNET == "ON":
 	
-	TR_REMOTE = subprocess.call(["which", "transmission-remote"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-	if TR_REMOTE != 0:
+	TRANSMISSION_REMOTE = subprocess.call(["which", "transmission-remote"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	if TRANSMISSION_REMOTE != 0:
 		quit(u"\n     \033[01m\033[91m \u2716 \033[00m\033[01mtransmission-remote\033[00m is \033[01m\033[91mMISSING\033[00m. Install before continuing.\n")
 	else:
 		try:
-			subprocess.check_call("nc -w 3 -vz " + TR_HOST + " " + TR_PORT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+			subprocess.check_call("nc -w 3 -vz " + TRAN_HOST + " " + TRAN_PORT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
 			if os.path.getsize(TORRENTDB) > 0:
-				MAGNETLK = open(TORRENTDB, "r")
-				for TORR in MAGNETLK:
+				MAGNETDB = open(TORRENTDB, "r")
+				for TORR in MAGNETDB:
 					TORR = TORR.strip()
 					if len(TORR):
-						TRANSMISSION = "transmission-remote " + TR_HOST + ":" + TR_PORT + " --auth " + USERNAME + ":" + PASSWORD + " --add " + TORR
+						TRANSMISSION = "transmission-remote " + TRAN_HOST + ":" + TRAN_PORT + " --auth " + USERNAME + ":" + PASSWORD + " --add " + TORR
 						subprocess.call(TRANSMISSION,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
 						
 					###  Clear the magnet links database
 					open(TORRENTDB, "w").close()
-				MAGNETLK.close()
+				MAGNETDB.close()
 			
 				print(u"     \033[01m TORRENTS \033[91mADDED\033[00m to \033[01mTransmission BT Daemon\033[00m")	
 		except:
