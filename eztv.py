@@ -50,11 +50,11 @@ TORRENT_DB = []
 HISTORYLOG = []
 TORRENTSDT = {}
 
-if not os.path.exists(DIRECTORY):
+if (not os.path.exists(DIRECTORY)):
 	os.makedirs(DIRECTORY)
 
 ###  if HASHESLOG has not been modified for more than x days, start CLEAN
-if LOG_WRITE == "ON":
+if (LOG_WRITE == "ON"):
 	try:
 		CUR_TIME = time.time()
 		MOD_TIME = os.path.getmtime(HASHESLOG)
@@ -83,9 +83,11 @@ try:
 			TVSERIESDB.append(SERIES.lower())
 		LIST.close()
 	print(u"")
+	
 	### need to revisit this bit of code at some point...
 	if (WATCHSIZE == "1"):
 		subprocess.call("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74",shell=True)
+	
 	else:
 		print(u"     \033[01m\033[93m \u26a0 \033[00m" + WATCHLIST + " is \033[01m\033[93mEMPTY\033[00m")
 		print(u"     \033[01m\033[93m \u26a0 ADD\033[00m TV series titles, separated by a new line (e.g. Family Guy)\n")
@@ -122,16 +124,16 @@ try:
 		for SERIES in TVSERIESDB:
 			
 			###  make EZTV SERIES TITLES lowercase for easier comparison
-			if SERIES.lower() in XMLTITLE.lower():
+			if (SERIES.lower() in XMLTITLE.lower()):
 				
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
-				if FILTER_TR == "ON":
-					if any(FILTER in XML_FILE for FILTER in FILTERSTR):
+				if (FILTER_TR == "ON"):
+					if (any(FILTER in XML_FILE for FILTER in FILTERSTR)):
 						print(u"      \033[01m\033[93m\u26a0 \033[93mFILTERED\033[00m : " + XML_FILE)[:95] + " ..."
 						continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML
-				if XML_MAGN == "":
+				if (XML_MAGN == ""):
 					print(u"      \033[01m\033[91m\u2716 \033[93mNO MAGNET URI\033[00m : " + XML_FILE)[:95] + " ..."
 					continue
 				
@@ -144,13 +146,13 @@ try:
 				HISTORY.close()
 				
 				###  Check the HISTORY LOG for already downloaded torrents
-				if XML_HASH in HISTORYLOG:
+				if (XML_HASH in HISTORYLOG):
 					continue
 				else:
 					HISTORYLOG.append(XML_HASH)
 				
 				###  Check for existing MAGNET LINKS
-				if XML_MAGN in TORRENT_DB:
+				if (XML_MAGN in TORRENT_DB):
 					continue
 				else:
 					TORRENT_DB.append(XML_MAGN)
@@ -163,7 +165,7 @@ try:
 	LOGRESULTS = []
 	for TOR in TORRENTSDT:
 		### Write the TORRENT LOG. Append MAGNET URIs for MATCHED TORRENTS
-		if TOR_WRITE == "ON":
+		if (TOR_WRITE == "ON"):
 			try:
 				MAGNETDB = open(TORRENTDB, "w")
 				for MAGNETURI in TORRENT_DB:
@@ -175,7 +177,7 @@ try:
 			
 			
 		### Write the HISTORY LOG. We DO NOT WANT to DOWNLOAD torrents twice
-		if LOG_WRITE == "ON":
+		if (LOG_WRITE == "ON"):
 			try:
 				LOGDB = open(HASHESLOG, "w")
 				for HASH in HISTORYLOG:
@@ -190,7 +192,7 @@ try:
 		
 
 	###  PRINT TV SERIES MATCHES
-	if FILTER_TR == "ON":
+	if (FILTER_TR == "ON"):
 		print(u"")
 	
 	if LOGRESULTS:
@@ -209,15 +211,15 @@ except:
 
 
 ###  TRANSMISSION REMOTE
-if ADDMAGNET == "ON":
+if (ADDMAGNET == "ON"):
 	
 	TRANSMISSION_REMOTE = subprocess.call(["which", "transmission-remote"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-	if TRANSMISSION_REMOTE != 0:
+	if (TRANSMISSION_REMOTE != 0):
 		quit(u"\n     \033[01m\033[91m \u2716 \033[00m\033[01mtransmission-remote\033[00m is \033[01m\033[91mMISSING\033[00m. Install before continuing.\n")
 	else:
 		try:
 			subprocess.check_call("nc -w 3 -vz " + TRAN_HOST + " " + TRAN_PORT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-			if os.path.getsize(TORRENTDB) > 0:
+			if (os.path.getsize(TORRENTDB) > 0):
 				MAGNETDB = open(TORRENTDB, "r")
 				for TORR in MAGNETDB:
 					TORR = TORR.strip()
