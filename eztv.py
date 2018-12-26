@@ -34,6 +34,7 @@ RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
 TOR_WRITE = "YES"					# Keep magnet URIs in Torrent DB   [YES|NO]
 LOG_WRITE = "YES"					# Keep torrents in history log     [YES|NO]
 DAYS2KEEP = "2"						# Clean history log after x days
+FILTER_ON = "YES"					# Activate filter                  [YES|NO]
 FILTERSTR = "480p, 720p, 1080p, .avi$, iP.WEB-DL"	# Do NOT download FILENAMES w/ these tags
 
 ### TRANSMISSION DAEMON ###########################################################################
@@ -124,9 +125,10 @@ try:
 			if SERIES.lower() in XMLTITLE.lower():
 				
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
-				if any(FILTER in XML_FILE for FILTER in FILTERSTR):
-					print(u"      \033[01m\033[93m\u26a0 \033[93mFILTERED\033[00m : " + XML_FILE)[:95] + " ..."
-					continue
+				if FILTER_ON == "YES":
+					if any(FILTER in XML_FILE for FILTER in FILTERSTR):
+						print(u"      \033[01m\033[93m\u26a0 \033[93mFILTERED\033[00m : " + XML_FILE)[:95] + " ..."
+						continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML
 				if XML_MAGN == "":
