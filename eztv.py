@@ -35,9 +35,9 @@ TOR_WRITE = "YES"					# Keep magnet URIs in Torrent DB   [YES|NO]
 LOG_WRITE = "YES"					# Keep torrents in history log     [YES|NO]
 DAYS2KEEP = "2"						# Clean history log after x days
 FILTERSTR = ("480p","720p","1080p",".avi$","iP.WEB-DL")	# Do NOT download FILENAMES w/ these tags
-ADDMAGNET = "YES"					# Add magnet URIs to transmission? [YES|NO]
 
 ### TRANSMISSION DAEMON ###########################################################################
+ADDMAGNET = "YES"					# Add magnet URIs to transmission  [YES|NO]
 TR_HOST="192.168.2.100"
 TR_PORT="9091"
 USERNAME="transmission username"
