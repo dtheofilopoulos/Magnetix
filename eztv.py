@@ -34,7 +34,7 @@ RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
 TOR_WRITE = "ON"					# Keep magnet URIs in Torrent DB   [ON|OFF]
 LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
 DAYS2KEEP = "2"						# Clean history log after x days
-FILTER_ON = "ON"					# Activate filter (needs FILTERSTR)[ON|OFF]
+FILTER_TR = "ON"					# Activate filter (needs FILTERSTR)[ON|OFF]
 FILTERSTR = "480p, 720p, 1080p, .avi$, iP.WEB-DL"	# Do NOT download FILENAMES w/ these tags
 
 ### TRANSMISSION DAEMON ###########################################################################
@@ -125,7 +125,7 @@ try:
 			if SERIES.lower() in XMLTITLE.lower():
 				
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
-				if FILTER_ON == "ON":
+				if FILTER_TR == "ON":
 					if any(FILTER in XML_FILE for FILTER in FILTERSTR):
 						print(u"      \033[01m\033[93m\u26a0 \033[93mFILTERED\033[00m : " + XML_FILE)[:95] + " ..."
 						continue
@@ -190,7 +190,7 @@ try:
 		
 
 	###  PRINT TV SERIES MATCHES
-	if FILTER_ON == "ON":
+	if FILTER_TR == "ON":
 		print(u"")
 	
 	if LOGRESULTS:
