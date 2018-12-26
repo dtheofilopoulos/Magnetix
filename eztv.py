@@ -190,7 +190,9 @@ try:
 		
 
 	###  PRINT TV SERIES MATCHES
-	print(u"")
+	if FILTER_ON == "YES":
+		print(u"")
+	
 	if LOGRESULTS:
 		print(u"     \033[01m\033[91m " + str(len(LOGRESULTS)) + " \033[00m\033[01mTORRENTS\033[00m match your TV series watchlist\n")
 		i = 1
