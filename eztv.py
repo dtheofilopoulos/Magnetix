@@ -34,7 +34,7 @@ RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
 TOR_WRITE = "YES"					# Keep magnet URIs in Torrent DB   [YES|NO]
 LOG_WRITE = "YES"					# Keep torrents in history log     [YES|NO]
 DAYS2KEEP = "2"						# Clean history log after x days
-FILTERSTR = ("480p","720p","1080p",".avi$","iP.WEB-DL")	# Do NOT download FILENAMES w/ these tags
+FILTERSTR = "480p, 720p, 1080p, .avi$, iP.WEB-DL"	# Do NOT download FILENAMES w/ these tags
 
 ### TRANSMISSION DAEMON ###########################################################################
 ADDMAGNET = "YES"					# Add magnet URIs to transmission  [YES|NO]
