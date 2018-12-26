@@ -188,8 +188,9 @@ try:
 		
 
 	###  PRINT TV SERIES MATCHES
+	print(u"")
 	if LOGRESULTS:
-		print(u"\n     \033[01m\033[91m " + str(len(LOGRESULTS)) + " \033[00m\033[01mTORRENTS\033[00m match your TV series watchlist\n")
+		print(u"     \033[01m\033[91m " + str(len(LOGRESULTS)) + " \033[00m\033[01mTORRENTS\033[00m match your TV series watchlist\n")
 		i = 1
 		for RESULT in LOGRESULTS:
 			print(u"      \033[01m" + str(i).zfill(2) + "\033[00m. " + RESULT)
