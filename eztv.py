@@ -17,6 +17,8 @@ print(u"""
 
 	License  | Dio ( classicrocker384@gmail.com ), 3-Clause BSD License
 	Revision | """ + str(time.strftime('%d/%m/%Y, %H:%M', time.localtime(MODTIME))) + """
+	Depends  | transmission-remote,
+	           os.path, subprocess, time, urllib2, feedparser
 	
  ------------------------------------------------------------------------------
 """)
