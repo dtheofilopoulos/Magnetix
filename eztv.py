@@ -71,23 +71,21 @@ if LOG_WRITE == "YES":
 print(u" :::  \033[01mTV SERIES WATCHLIST\033[00m  ::::::::::::::::::::::::::::::::::::::::::::::::::::")
 try:
 	LIST = open(WATCHLIST, "r")
-	
+	WATCHSIZE = "0"
 	for SERIES in sorted(LIST):
 		SERIES = SERIES.strip()
 		if len(SERIES):
-			WATCHSIZE="1"
-			#print(u"      " + SERIES)
-			
+			WATCHSIZE = "1"			
 			###  Make the TITLES lowercase for easier comparison
 			TVSERIESDB.append(SERIES.lower())
-		else:
-			print(u"     \033[01m\033[93m \u26a0 \033[00m" + WATCHLIST + " is \033[01m\033[93mEMPTY\033[00m")
-			print(u"     \033[01m\033[93m \u26a0 ADD\033[00m TV series titles, separated by a new line (e.g. Family Guy)\n")
-	LIST.close()
+		LIST.close()
 	print(u"")
 	### need to revisit this bit of code at some point...
-	if (WATCHSIZE):
+	if (WATCHSIZE == "1"):
 		subprocess.call("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74",shell=True)
+	else:
+		print(u"     \033[01m\033[93m \u26a0 \033[00m" + WATCHLIST + " is \033[01m\033[93mEMPTY\033[00m")
+		print(u"     \033[01m\033[93m \u26a0 ADD\033[00m TV series titles, separated by a new line (e.g. Family Guy)\n")
 	print(u"")
 	
 except IOError:
