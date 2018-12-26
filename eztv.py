@@ -53,23 +53,6 @@ TORRENTSDT = {}
 if (not os.path.exists(DIRECTORY)):
 	os.makedirs(DIRECTORY)
 
-###  if HASHESLOG has not been modified for more than x days, start CLEAN
-if (LOG_WRITE == "ON"):
-	try:
-		CUR_TIME = time.time()
-		MOD_TIME = os.path.getmtime(HASHESLOG)
-	
-		if (CUR_TIME - MOD_TIME >= DAYS2KEEP * 24 * 3600):
-			
-			open(HASHESLOG, "w").close()
-			print(u"     \033[01m\033[93m \u26a0 \033[00m" + HASHESLOG + " was \033[01mTRUNCATED\033[00m")
-		
-	except:
-		print(u"     \033[01m\033[91m \u2716 \033[00m" + HASHESLOG + " was \033[01m\033[91mNOT ACCESSIBLE\033[00m")
-		open(HASHESLOG, "w").close()
-		print(u"     \033[01m\033[91m \u2716 \033[00m" + HASHESLOG + " was \033[01mCREATED\033[00m\n")
-
-
 ###  Print the WATCHLIST
 print(u" :::  \033[01mTV SERIES WATCHLIST\033[00m  ::::::::::::::::::::::::::::::::::::::::::::::::::::")
 try:
@@ -97,6 +80,23 @@ except IOError:
 	print(u"     \033[01m\033[91m \u2716 \033[00m" + WATCHLIST + " was \033[01m\033[91mNOT ACCESSIBLE\033[00m")
 	open(WATCHLIST, "w").close()
 	print(u"     \033[01m\033[91m \u2716 \033[00m" + WATCHLIST + " was \033[01mCREATED\033[00m")
+
+
+###  if HASHESLOG has not been modified for more than x days, start CLEAN
+if (LOG_WRITE == "ON"):
+	try:
+		CUR_TIME = time.time()
+		MOD_TIME = os.path.getmtime(HASHESLOG)
+	
+		if (CUR_TIME - MOD_TIME >= DAYS2KEEP * 24 * 3600):
+			
+			open(HASHESLOG, "w").close()
+			print(u"     \033[01m\033[93m \u26a0 \033[00m" + HASHESLOG + " was \033[01mTRUNCATED\033[00m")
+		
+	except:
+		print(u"     \033[01m\033[91m \u2716 \033[00m" + HASHESLOG + " was \033[01m\033[91mNOT ACCESSIBLE\033[00m")
+		open(HASHESLOG, "w").close()
+		print(u"     \033[01m\033[91m \u2716 \033[00m" + HASHESLOG + " was \033[01mCREATED\033[00m\n")
 
 
 print(u"\n :::  \033[01mTV SERIES MATCHES\033[00m  ::::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
