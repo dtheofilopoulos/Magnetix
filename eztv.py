@@ -13,6 +13,7 @@ print(u"""
  \033[01m""" + PRONAME + """, """ + VERSION + """ \033[00m| EZTV Torrent Downloader
 
 	Downloads matching TV Series titles as soon as they air on eztv
+	and automatically queues them in transmission daemon
 
 	License  | Dio ( classicrocker384@gmail.com ), 3-Clause BSD License
 	Revision | """ + str(time.strftime('%d/%m/%Y, %H:%M', time.localtime(MODTIME))) + """
