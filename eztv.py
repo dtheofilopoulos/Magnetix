@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf8
-import os.path,time,urllib2,feedparser
+import os.path,time,urllib2,feedparser,subprocess
 
 os.system("clear")
 
@@ -10,7 +10,7 @@ PRONAME=os.path.basename(__file__)
 VERSION="v4.4"
 
 print(u"""
- \033[01m""" + PRONAME + """, """ + VERSION + """ \033[0m| EZTV Torrent Downloader
+ \033[01m""" + PRONAME + """, """ + VERSION + """ \033[00m| EZTV Torrent Downloader
 
 	Downloads matching TV Series titles as soon as they air on eztv
 
@@ -21,7 +21,7 @@ print(u"""
 """)
 
 ###  CONFIGURATION  ###############################################################################
-DIRECTORY = os.path.dirname(__file__) + "/"		# Absolute PATH of working directory
+DIRECTORY = os.path.dirname(__file__) + "/pyEZTV/"	# Absolute PATH of working directory
 WATCHLIST = DIRECTORY + "series.db"			# TV SERIES watchlist
 TORRENTDB = DIRECTORY + "torrent.db"			# Matched torrents database w/ magnet links
 HASHESLOG = DIRECTORY + "torrent.log"			# History log of matched torrents w/ hashes
@@ -32,6 +32,12 @@ TOR_WRITE = "YES"					# Keep magnet URIs in Torrent DB   [YES|NO]
 LOG_WRITE = "YES"					# Keep torrents in history log     [YES|NO]
 DAYS2KEEP = "2"						# Clean history log after x days
 FILTERSTR = ("480p","720p","1080p",".avi$","iP.WEB-DL")	# Do NOT download FILENAMES w/ these tags
+
+### TRANSMISSION DAEMON ######################################################
+TR_HOST="192.168.2.100"
+TR_PORT="9091"
+USERNAME="transmission username"
+PASSWORD="transmission password"
 
 ###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
@@ -49,16 +55,16 @@ if LOG_WRITE == "YES":
 		if (CUR_TIME - MOD_TIME >= DAYS2KEEP * 24 * 3600):
 			
 			open(HASHESLOG, "w").close()
-			print(u"     \033[01m\033[93m \u26a0 \033[0m" + HASHESLOG + " was \033[01mTRUNCATED\033[0m")
+			print(u"     \033[01m\033[93m \u26a0 \033[00m" + HASHESLOG + " was \033[01mTRUNCATED\033[00m")
 		
 	except:
-		print(u"     \033[01m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[01m\033[91mNOT ACCESSIBLE\033[0m")
+		print(u"     \033[01m\033[91m \u2716 \033[00m" + HASHESLOG + " was \033[01m\033[91mNOT ACCESSIBLE\033[00m")
 		open(HASHESLOG, "w").close()
-		print(u"     \033[01m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[01mCREATED\033[0m\n")
+		print(u"     \033[01m\033[91m \u2716 \033[00m" + HASHESLOG + " was \033[01mCREATED\033[00m\n")
 
 
 ###  Print the WATCHLIST
-print(u" :::  \033[01mTV SERIES WATCHLIST\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::")
+print(u" :::  \033[01mTV SERIES WATCHLIST\033[00m  ::::::::::::::::::::::::::::::::::::::::::::::::::::")
 try:
 	LIST = open(WATCHLIST, "r")
 	
@@ -71,21 +77,22 @@ try:
 			###  Make the TITLES lowercase for easier comparison
 			TVSERIESDB.append(SERIES.lower())
 		else:
-			print(u"     \033[01m\033[93m \u26a0 \033[0m" + WATCHLIST + " is \033[01m\033[93mEMPTY\033[0m")
-			print(u"     \033[01m\033[93m \u26a0 ADD\033[0m TV series titles, separated by a new line (e.g. Family Guy)\n")
+			print(u"     \033[01m\033[93m \u26a0 \033[00m" + WATCHLIST + " is \033[01m\033[93mEMPTY\033[00m")
+			print(u"     \033[01m\033[93m \u26a0 ADD\033[00m TV series titles, separated by a new line (e.g. Family Guy)\n")
 	LIST.close()
 	print(u"")
 	### need to revisit this bit of code at some point...
 	if (WATCHSIZE):
-		print(os.popen("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74").read())
+		subprocess.call("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74",shell=True)
+	print(u"")
 	
 except IOError:
-	print(u"     \033[01m\033[91m \u2716 \033[0m" + WATCHLIST + " was \033[01m\033[91mNOT ACCESSIBLE\033[0m")
+	print(u"     \033[01m\033[91m \u2716 \033[00m" + WATCHLIST + " was \033[01m\033[91mNOT ACCESSIBLE\033[00m")
 	#open(WATCHLIST, "w").close()
-	print(u"     \033[01m\033[91m \u2716 \033[0m" + WATCHLIST + " was \033[01mCREATED\033[0m")
+	print(u"     \033[01m\033[91m \u2716 \033[00m" + WATCHLIST + " was \033[01mCREATED\033[00m")
 
 
-print(u"\n :::  \033[01mTV SERIES MATCHES\033[0m  ::::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
+print(u"\n :::  \033[01mTV SERIES MATCHES\033[00m  ::::::::::::::::::::::::::::::::::::::::::::::::::::::\n")
 ###  Check the EZTV RSS2.0 URI and parse the XML
 try:
 	URIHEADER = { "User-Agent": "Links (2.7; Linux; text)", "Content-Type": "text/xml", "pragma-directive": "no-cache" }
@@ -95,7 +102,7 @@ try:
 	XML_PARSED = feedparser.parse(XML).entries[:50]
 	
 except:
-	print(u"     \033[01m\033[91m \u2716 \033[0m\033[01mHTTP STATUS \033[91m408\033[0m for URI \033[01m" + str(RSSXMLURI) + "\033[0m")
+	print(u"     \033[01m\033[91m \u2716 \033[00m\033[01mHTTP STATUS \033[91m408\033[00m for URI \033[01m" + str(RSSXMLURI) + "\033[00m")
 
 
 try:
@@ -114,12 +121,12 @@ try:
 				
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
 				if any(FILTER in XML_FILE for FILTER in FILTERSTR):
-					print(u"      \033[01m\033[93m\u26a0 \033[93mFILTERED\033[0m : " + XML_FILE)[:93] + " ..."
+					print(u"      \033[01m\033[93m\u26a0 \033[93mFILTERED\033[00m : " + XML_FILE)[:93] + " ..."
 					continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML
 				if XML_MAGN == "":
-					print(u"      \033[01m\033[91m\u2716 \033[93mNO MAGNET URI\033[0m : " + XML_FILE)[:95] + " ..."
+					print(u"      \033[01m\033[91m\u2716 \033[93mNO MAGNET URI\033[00m : " + XML_FILE)[:95] + " ..."
 					continue
 				
 				###  Load historical hashes
@@ -158,7 +165,7 @@ try:
 				MAGNETDB.close()
 			
 			except IOError:
-				quit(u"     \033[01m\033[91m \u2716 \033[0m" + TORRENTDB + " was \033[01m\033[91mNOT ACCESSIBLE\033[0m")
+				quit(u"     \033[01m\033[91m \u2716 \033[00m" + TORRENTDB + " was \033[01m\033[91mNOT ACCESSIBLE\033[00m")
 			
 			
 		### Write the HISTORY LOG. We DO NOT WANT to DOWNLOAD torrents twice
@@ -170,7 +177,7 @@ try:
 				LOGDB.close()
 			
 			except IOError:
-				quit(u"     \033[01m\033[91m \u2716 \033[0m" + HASHESLOG + " was \033[01m\033[91mNOT ACCESSIBLE\033[0m")
+				quit(u"     \033[01m\033[91m \u2716 \033[00m" + HASHESLOG + " was \033[01m\033[91mNOT ACCESSIBLE\033[00m")
 		
 		###  TITLES of TORRENT DOWNLOADS
 		LOGRESULTS.append(TORRENTSDT[TOR]["TITLE"])
@@ -178,17 +185,43 @@ try:
 
 	###  PRINT TV SERIES MATCHES
 	if LOGRESULTS:
-		print(u"\n     \033[01m\033[91m " + str(len(LOGRESULTS)) + " \033[0m\033[01mTORRENTS\033[0m match your TV series watchlist\n")
+		print(u"\n     \033[01m\033[91m " + str(len(LOGRESULTS)) + " \033[00m\033[01mTORRENTS\033[00m match your TV series watchlist\n")
 		i = 1
 		for RESULT in LOGRESULTS:
-			print(u"      \033[01m" + str(i).zfill(2) + "\033[0m. " + RESULT)
+			print(u"      \033[01m" + str(i).zfill(2) + "\033[00m. " + RESULT)
 			i += 1
 		print(u"")
 	else:
-		print(u"     \033[01m\033[93m \u26a0 NO \033[0m\033[01mTORRENTS\033[0m match your TV series watchlist")
+		print(u"     \033[01m\033[93m \u26a0 NO \033[00m\033[01mTORRENTS\033[00m match your TV series watchlist")
+
 
 except:
-	print(u"     \033[01m\033[91m \u2716 ERROR\033[0m: CANNOT match torrents.")
+	print(u"     \033[01m\033[91m \u2716 ERROR\033[00m: CANNOT match torrents.")
+
+
+###  TRANSMISSION REMOTE
+	
+TR_REMOTE = subprocess.call(["which", "transmission-remote"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+if TR_REMOTE != 0:
+	quit(u"\n     \033[01m\033[91m \u2716 \033[00m\033[01mtransmission-remote\033[00m is \033[01m\033[91mMISSING\033[00m. Install before continuing.\n")
+else:
+	try:
+		subprocess.check_call("nc -w 3 -vz " + TR_HOST + " " + TR_PORT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+		if os.path.getsize(TORRENTDB) > 0:
+			MAGNETLK = open(TORRENTDB, "r")
+			for TORR in MAGNETLK:
+				TORR = TORR.strip()
+				if len(TORR):
+					TRANSMISSION = "transmission-remote " + TR_HOST + ":" + TR_PORT + " --auth " + USERNAME + ":" + PASSWORD + " --add " + TORR
+					subprocess.call(TRANSMISSION,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+					
+				###  Clear the magnet links database
+				open(TORRENTDB, "w").close()
+			MAGNETLK.close()
+		
+			print(u"     \033[01m TORRENTS \033[91mADDED\033[00m to \033[01mTransmission BT Daemon\033[00m")	
+	except:
+		print(u"     \033[01m\033[91m \u2716 \033[00mCould NOT connect to Transmission. Check RPC configuration.")
 
 ### QUIT EVERYTHING, JUST IN CASE
 quit(u"\n")
