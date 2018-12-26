@@ -49,7 +49,9 @@ TORRENT_DB = []
 HISTORYLOG = []
 TORRENTSDT = {}
 
-
+if not os.path.exists(DIRECTORY):
+	os.makedirs(DIRECTORY)
+	
 ###  if HASHESLOG has not been modified for more than x days, start CLEAN
 if LOG_WRITE == "YES":
 	try:
