@@ -26,13 +26,13 @@ print(u"""
 ###  CONFIGURATION  ###############################################################################
 DIRECTORY = os.path.dirname(__file__) + "/pyEZTV/"	# Absolute PATH of working directory
 WATCHLIST = DIRECTORY + "series.db"			# TV SERIES watchlist
-TORRENTDB = DIRECTORY + "torrent.db"			# Matched torrents database w/ magnet links
 HASHESLOG = DIRECTORY + "torrent.log"			# History log of matched torrents w/ hashes
+TORRENTDB = DIRECTORY + "torrent.db"			# Matched torrents database w/ magnet links
 
 ###  SETTINGS  ####################################################################################
 RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
-TOR_WRITE = "ON"					# Keep magnet URIs in Torrent DB   [ON|OFF]
-LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
+TOR_WRITE = "OFF"					# Keep magnet URIs in Torrent DB   [ON|OFF]
+LOG_WRITE = "OFF"					# Keep torrents in history log     [ON|OFF]
 DAYS2KEEP = "2"						# Clean history log after x days
 FILTER_TR = "ON"					# Activate filter (needs FILTERSTR)[ON|OFF]
 FILTERSTR = "480p, 720p, 1080p, .avi$, iP.WEB-DL"	# Do NOT download FILENAMES w/ these tags
@@ -41,8 +41,8 @@ FILTERSTR = "480p, 720p, 1080p, .avi$, iP.WEB-DL"	# Do NOT download FILENAMES w/
 ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
 TRAN_HOST = "192.168.2.100"				# Transmission Daemon Host
 TRAN_PORT = "9091"					# Transmission Daemon Port
-USERNAME = "transmission username"			# Transmission Daemon Username
-PASSWORD = "transmission password"			# Transmission Daemon Password
+USERNAME = "transmission"				# Transmission Daemon Username
+PASSWORD = "transmission"				# Transmission Daemon Password
 
 ###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
@@ -50,6 +50,7 @@ TORRENT_DB = []
 HISTORYLOG = []
 TORRENTSDT = {}
 
+###  Create data directory for the script if it does not exist
 if (not os.path.exists(DIRECTORY)):
 	os.makedirs(DIRECTORY)
 
@@ -111,6 +112,7 @@ try:
 except:
 	print(u"     \033[01m\033[91m \u2716 \033[00m\033[01mHTTP STATUS \033[91m408\033[00m for URI \033[01m" + str(RSSXMLURI) + "\033[00m")
 
+FILTER_SP = "0"
 
 try:
 	for XMLENTRY in XML_PARSED:
@@ -129,10 +131,11 @@ try:
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
 				if (FILTER_TR == "ON"):
 					if (any(FILTER in XML_FILE for FILTER in FILTERSTR)):
+						FILTER_SP = "1"
 						print(u"      \033[01m\033[93m\u26a0 \033[93mFILTERED\033[00m : " + XML_FILE)[:95] + " ..."
 						continue
 				
-				###  in the off-chance that NO MAGNET URI in the XML
+				###  in the off-chance that NO MAGNET URI in the XML, filter out the problematic torrent
 				if (XML_MAGN == ""):
 					print(u"      \033[01m\033[91m\u2716 \033[93mNO MAGNET URI\033[00m : " + XML_FILE)[:95] + " ..."
 					continue
@@ -192,7 +195,7 @@ try:
 		
 
 	###  PRINT TV SERIES MATCHES
-	if (FILTER_TR == "ON"):
+	if (FILTER_SP == "1"):
 		print(u"")
 	
 	if LOGRESULTS:
@@ -203,7 +206,7 @@ try:
 			i += 1
 		print(u"")
 	else:
-		print(u"     \033[01m\033[93m \u26a0 NO \033[00m\033[01mTORRENTS\033[00m match your TV series watchlist")
+		print(u"     \033[01m\033[93m \u26a0 NO \033[00m\033[01mTORRENTS\033[00m match your TV series watchlist criteria")
 
 
 except:
@@ -214,8 +217,10 @@ except:
 if (ADDMAGNET == "ON"):
 	
 	TRANSMISSION_REMOTE = subprocess.call(["which", "transmission-remote"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	
 	if (TRANSMISSION_REMOTE != 0):
 		quit(u"\n     \033[01m\033[91m \u2716 \033[00m\033[01mtransmission-remote\033[00m is \033[01m\033[91mMISSING\033[00m. Install before continuing.\n")
+		
 	else:
 		try:
 			subprocess.check_call("nc -w 3 -vz " + TRAN_HOST + " " + TRAN_PORT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
@@ -232,6 +237,7 @@ if (ADDMAGNET == "ON"):
 				MAGNETDB.close()
 			
 				print(u"     \033[01m TORRENTS \033[91mADDED\033[00m to \033[01mTransmission BT Daemon\033[00m")	
+		
 		except:
 			quit(u"     \033[01m\033[91m \u2716 \033[00mCould NOT connect to Transmission. Check RPC configuration.")
 
