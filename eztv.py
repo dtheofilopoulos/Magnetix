@@ -5,9 +5,9 @@ import os.path, subprocess, time, urllib2, feedparser
 os.system("clear")
 
 ###  CREDITS  #####################################################################################
-MODTIME=os.path.getmtime(__file__)
-PRONAME=os.path.basename(__file__)
-VERSION="v4.4"
+MODTIME = os.path.getmtime(__file__)
+PRONAME = os.path.basename(__file__)
+VERSION = "v4.4"
 
 print(u"""
  \033[01m""" + PRONAME + """, """ + VERSION + """ \033[00m| EZTV Torrent Downloader
