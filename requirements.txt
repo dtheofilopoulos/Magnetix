@@ -3,3 +3,4 @@ time
 urllib2
 feedparser
 subprocess
+transmission-remote
