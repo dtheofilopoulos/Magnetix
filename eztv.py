@@ -227,7 +227,7 @@ if ADDMAGNET == "YES":
 			
 				print(u"     \033[01m TORRENTS \033[91mADDED\033[00m to \033[01mTransmission BT Daemon\033[00m")	
 		except:
-			print(u"     \033[01m\033[91m \u2716 \033[00mCould NOT connect to Transmission. Check RPC configuration.")
+			quit(u"     \033[01m\033[91m \u2716 \033[00mCould NOT connect to Transmission. Check RPC configuration.")
 
 ### QUIT EVERYTHING, JUST IN CASE
 quit(u"\n")
