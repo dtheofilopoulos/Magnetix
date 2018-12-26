@@ -33,6 +33,7 @@ TOR_WRITE = "YES"					# Keep magnet URIs in Torrent DB   [YES|NO]
 LOG_WRITE = "YES"					# Keep torrents in history log     [YES|NO]
 DAYS2KEEP = "2"						# Clean history log after x days
 FILTERSTR = ("480p","720p","1080p",".avi$","iP.WEB-DL")	# Do NOT download FILENAMES w/ these tags
+ADDMAGNET = "YES"					# Add magnet URIs to transmission? [YES|NO]
 
 ### TRANSMISSION DAEMON ###########################################################################
 TR_HOST="192.168.2.100"
@@ -201,28 +202,29 @@ except:
 
 
 ###  TRANSMISSION REMOTE
+if ADDMAGNET == "YES":
 	
-TR_REMOTE = subprocess.call(["which", "transmission-remote"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-if TR_REMOTE != 0:
-	quit(u"\n     \033[01m\033[91m \u2716 \033[00m\033[01mtransmission-remote\033[00m is \033[01m\033[91mMISSING\033[00m. Install before continuing.\n")
-else:
-	try:
-		subprocess.check_call("nc -w 3 -vz " + TR_HOST + " " + TR_PORT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-		if os.path.getsize(TORRENTDB) > 0:
-			MAGNETLK = open(TORRENTDB, "r")
-			for TORR in MAGNETLK:
-				TORR = TORR.strip()
-				if len(TORR):
-					TRANSMISSION = "transmission-remote " + TR_HOST + ":" + TR_PORT + " --auth " + USERNAME + ":" + PASSWORD + " --add " + TORR
-					subprocess.call(TRANSMISSION,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-					
-				###  Clear the magnet links database
-				open(TORRENTDB, "w").close()
-			MAGNETLK.close()
-		
-			print(u"     \033[01m TORRENTS \033[91mADDED\033[00m to \033[01mTransmission BT Daemon\033[00m")	
-	except:
-		print(u"     \033[01m\033[91m \u2716 \033[00mCould NOT connect to Transmission. Check RPC configuration.")
+	TR_REMOTE = subprocess.call(["which", "transmission-remote"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	if TR_REMOTE != 0:
+		quit(u"\n     \033[01m\033[91m \u2716 \033[00m\033[01mtransmission-remote\033[00m is \033[01m\033[91mMISSING\033[00m. Install before continuing.\n")
+	else:
+		try:
+			subprocess.check_call("nc -w 3 -vz " + TR_HOST + " " + TR_PORT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+			if os.path.getsize(TORRENTDB) > 0:
+				MAGNETLK = open(TORRENTDB, "r")
+				for TORR in MAGNETLK:
+					TORR = TORR.strip()
+					if len(TORR):
+						TRANSMISSION = "transmission-remote " + TR_HOST + ":" + TR_PORT + " --auth " + USERNAME + ":" + PASSWORD + " --add " + TORR
+						subprocess.call(TRANSMISSION,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+						
+					###  Clear the magnet links database
+					open(TORRENTDB, "w").close()
+				MAGNETLK.close()
+			
+				print(u"     \033[01m TORRENTS \033[91mADDED\033[00m to \033[01mTransmission BT Daemon\033[00m")	
+		except:
+			print(u"     \033[01m\033[91m \u2716 \033[00mCould NOT connect to Transmission. Check RPC configuration.")
 
 ### QUIT EVERYTHING, JUST IN CASE
 quit(u"\n")
