@@ -49,6 +49,7 @@ TVSERIESDB = []
 TORRENT_DB = []
 HISTORYLOG = []
 TORRENTSDT = {}
+FILTER_SPC = "0"
 
 ###  Create data directory for the script if it does not exist
 if (not os.path.exists(DIRECTORY)):
@@ -112,7 +113,6 @@ try:
 except:
 	print(u"     \033[01m\033[91m \u2716 \033[00m\033[01mHTTP STATUS \033[91m408\033[00m for URI \033[01m" + str(RSSXMLURI) + "\033[00m")
 
-FILTER_SP = "0"
 
 try:
 	for XMLENTRY in XML_PARSED:
@@ -131,7 +131,7 @@ try:
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
 				if (FILTER_TR == "ON"):
 					if (any(FILTER in XML_FILE for FILTER in FILTERSTR)):
-						FILTER_SP = "1"
+						FILTER_SPC = "1"
 						print(u"      \033[01m\033[93m\u26a0 \033[93mFILTERED\033[00m : " + XML_FILE)[:95] + " ..."
 						continue
 				
@@ -195,7 +195,7 @@ try:
 		
 
 	###  PRINT TV SERIES MATCHES
-	if (FILTER_SP == "1"):
+	if (FILTER_TR == "ON" and FILTER_SPC == "1"):
 		print(u"")
 	
 	if LOGRESULTS:
