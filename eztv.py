@@ -5,7 +5,7 @@ import os.path, subprocess, time, urllib2, feedparser
 os.system("clear")
 
 ###  COLORED OUTPUT  ##############################################################################
-AEC = {"BLD":"\33[01m", "RED":"\33[91m", "YLW":"\33[93m", "CRS":"\33[39m", "RST":"\33[00m",}
+AEC = {"BLD":"\33[01m", "RED":"\33[91m", "GRN":"\33[92m", "YLW":"\33[93m", "RSC":"\33[39m", "RST":"\33[00m",}
 
 ###  CREDITS  #####################################################################################
 MODTIME = os.path.getmtime(__file__)
@@ -78,14 +78,14 @@ try:
 		subprocess.call("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74",shell=True)
 	
 	else:
-		print(u"     {BLD}{YLW} \u26a0 {CRS}" + WATCHLIST + " is {YLW}EMPTY{RST}").format(**AEC)
-		print(u"     {BLD}{YLW} \u26a0 ADD{CRS} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC)
+		print(u"     {BLD}{YLW} \u26a0 {RSC}" + WATCHLIST + " is {YLW}EMPTY{RST}").format(**AEC)
+		print(u"     {BLD}{YLW} \u26a0 ADD{RSC} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC)
 	print(u"")
 	
 except IOError:
-	print(u"\n     {BLD}{RED} \u2716 {CRS}" + WATCHLIST + " {RED}NOT ACCESSIBLE{RST}").format(**AEC)
+	print(u"\n     {BLD}{RED} \u2716 {RSC}" + WATCHLIST + " {RED}NOT ACCESSIBLE{RST}").format(**AEC)
 	open(WATCHLIST, "w").close()
-	print(u"     {BLD}{RED} \u2716 {CRS}" + WATCHLIST + " was CREATED{RST}\n").format(**AEC)
+	print(u"     {BLD}{RED} \u2716 {RSC}" + WATCHLIST + " was CREATED{RST}\n").format(**AEC)
 
 
 ###  if HASHESLOG has not been modified for more than x days, start CLEAN
@@ -97,12 +97,12 @@ if (LOG_WRITE == "ON"):
 		if (CUR_TIME - MOD_TIME >= DAYS2KEEP * 24 * 3600):
 			
 			open(HASHESLOG, "w").close()
-			print(u"     {BLD}{YLW} \u26a0 {CRS}" + HASHESLOG + " was TRUNCATED{RST}").format(**AEC)
+			print(u"     {BLD}{YLW} \u26a0 {RSC}" + HASHESLOG + " was TRUNCATED{RST}").format(**AEC)
 		
 	except:
-		print(u"     {BLD}{RED} \u2716 {CRS}" + HASHESLOG + " was {RED}NOT ACCESSIBLE{RST}").format(**AEC)
+		print(u"     {BLD}{RED} \u2716 {RSC}" + HASHESLOG + " was {RED}NOT ACCESSIBLE{RST}").format(**AEC)
 		open(HASHESLOG, "w").close()
-		print(u"     {BLD}{RED} \u2716 {CRS}" + HASHESLOG + " was CREATED{RST}\n").format(**AEC)
+		print(u"     {BLD}{RED} \u2716 {RSC}" + HASHESLOG + " was CREATED{RST}\n").format(**AEC)
 
 
 print(u"\n :::  {BLD}TV SERIES MATCHES{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::::\n").format(**AEC)
@@ -115,7 +115,7 @@ try:
 	XML_PARSED = feedparser.parse(XML).entries[:50]
 	
 except:
-	print(u"     {BLD}{RED} \u2716 {CRS}HTTP STATUS {RED}504{CRS}: GATEWAY TIMEOUT{RST} for URI " + str(RSSXMLURI)).format(**AEC)
+	print(u"     {BLD}{RED} \u2716 {RSC}HTTP STATUS {RED}504{RSC}: GATEWAY TIMEOUT{RST} for URI " + str(RSSXMLURI)).format(**AEC)
 
 
 try:
@@ -136,12 +136,12 @@ try:
 				if (FILTER_TR == "ON"):
 					if (any(FILTER in XML_FILE for FILTER in FILTERARR)):
 						FILTER_SPC = "1"
-						print(u"      {BLD}{YLW}\u26a0 {YLW}FILTERED{RST} : " + XML_FILE).format(**AEC)[:95] + " ..."
+						print(u"      {RED}\u2716 FILTERED{RST} : " + XML_FILE).format(**AEC)[:99]
 						continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML, filter out the problematic torrent
 				if (XML_MAGN == ""):
-					print(u"      {BLD}{RED}\u2716 {YLW}NO MAGNET URI{RST} : " + XML_FILE).format(**AEC)[:95] + " ..."
+					print(u"      {RED}\u2716 NOMAGNET{RST} : " + XML_FILE).format(**AEC)[:99]
 					continue
 				
 				###  Load historical hashes
@@ -150,12 +150,11 @@ try:
 					HASH = HASH.strip()
 					if len(HASH):
 						HISTORYLOG.append(HASH)
-				#HISTORYLOG = map(str.upper, HISTORY)
-
 				HISTORY.close()
 				
 				###  Check the HISTORY LOG for already downloaded torrents
 				if (XML_HASH in HISTORYLOG):
+					print(u"      {YLW}\u26a0 EXISTING{RST} : " + XML_FILE).format(**AEC)[:99]
 					continue
 				else:
 					HISTORYLOG.append(XML_HASH)
@@ -182,7 +181,7 @@ try:
 				MAGNETDB.close()
 			
 			except IOError:
-				print(u"     {BLD}{RED} \u2716 {CRS}" + TORRENTDB + " was {RED}NOTT ACCESSIBLE{RST}").format(**AEC)
+				print(u"     {BLD}{RED} \u2716 {RSC}" + TORRENTDB + " was {RED}NOTT ACCESSIBLE{RST}").format(**AEC)
 				
 			
 		### Write the HISTORY LOG. We DO NOT WANT to DOWNLOAD torrents twice
@@ -194,7 +193,7 @@ try:
 				LOGDB.close()
 			
 			except IOError:
-				print(u"     {BLD}{RED} \u2716 {CRS}" + HASHESLOG + " was {RED}NOT ACCESSIBLE{RST}").format(**AEC)
+				print(u"     {BLD}{RED} \u2716 {RSC}" + HASHESLOG + " was {RED}NOT ACCESSIBLE{RST}").format(**AEC)
 				
 		###  TITLES of TORRENT DOWNLOADS
 		LOGRESULTS.append(TORRENTSDT[TOR]["TITLE"])
@@ -205,18 +204,18 @@ try:
 		print(u"")
 	
 	if LOGRESULTS:
-		print(u"     {BLD}{RED} " + str(len(LOGRESULTS)) + " {CRS}TORRENTS{RST} match your TV series watchlist\n").format(**AEC)
+		print(u"     {BLD}{GRN} " + str(len(LOGRESULTS)) + " {RSC}TORRENTS{RST} match your TV series watchlist criteria\n").format(**AEC)
 		i = 1
 		for RESULT in LOGRESULTS:
 			print(u"      {BLD}" + str(i).zfill(2) + "{RST}. " + RESULT).format(**AEC)
 			i += 1
 		print(u"")
 	else:
-		print(u"     {BLD}{YLW} \u26a0 NO {CRS}TORRENTS{RST} match your TV series watchlist criteria").format(**AEC)
+		print(u"     {BLD}{YLW} \u26a0 NO {RSC}TORRENTS{RST} match your TV series watchlist criteria").format(**AEC)
 
 
 except:
-	print(u"     {BLD}{RED} \u2716 CANNOT{CRS} match torrents due to an {RED}ERROR{RST}").format(**AEC)
+	print(u"     {BLD}{RED} \u2716 CANNOT{RSC} match torrents due to an {RED}ERROR{RST}").format(**AEC)
 
 
 ###  TRANSMISSION REMOTE
@@ -225,7 +224,7 @@ if (ADDMAGNET == "ON"):
 	TRANSMISSION_REMOTE = subprocess.call(["which", "transmission-remote"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	
 	if (TRANSMISSION_REMOTE != 0):
-		print(u"\n     {BLD}{RED} \u2716 {CRS}transmission-remote is {RED}MISSING{RST}. Install before continuing.\n").format(**AEC)
+		print(u"\n     {BLD}{RED} \u2716 {RSC}transmission-remote is {RED}MISSING{RST}. Install before continuing.\n").format(**AEC)
 		
 	else:
 		try:
@@ -242,7 +241,7 @@ if (ADDMAGNET == "ON"):
 					open(TORRENTDB, "w").close()
 				MAGNETDB.close()
 			
-				print(u"     {BLD} TORRENTS {RED}ADDED{CRS} to Transmission BT Daemon{RST}").format(**AEC)	
+				print(u"     {BLD} TORRENTS {RED}ADDED{RSC} to Transmission BT Daemon{RST}").format(**AEC)	
 		
 		except:
 			print(u"     {BLD}{RED} \u2716 {RST}Could NOT connect to Transmission. Check RPC configuration.\n").format(**AEC)
