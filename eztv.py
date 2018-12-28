@@ -45,7 +45,7 @@ ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
 TRAN_HOST = "192.168.2.100"				# Transmission Daemon Host
 TRAN_PORT = "9091"					# Transmission Daemon Port
 USERNAME = "transmission"				# Transmission Daemon Username
-PASSWORD = "transmission"				# Transmission Daemon Password
+PASSWORD = "jeltzpass"					# Transmission Daemon Password
 
 ###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
@@ -241,13 +241,13 @@ if (ADDMAGNET == "ON"):
 					open(TORRENTDB, "w").close()
 				MAGNETDB.close()
 			
-				print(u"     {BLD} TORRENTS {RED}ADDED{RSC} to Transmission BT Daemon{RST}").format(**AEC)	
+			print(u"     {BLD}{GRN} \u263c {RSC}TORRENTS {GRN}ADDED{RST} remotely to Transmission Daemon").format(**AEC)	
 		
 		except:
-			print(u"     {BLD}{RED} \u2716 {RST}Could NOT connect to Transmission. Check RPC configuration.\n").format(**AEC)
+			print(u"     {BLD}{RED} \u2716 CONNECTION{RSC} to Transmission Daemon {RED}FAILED{RST}. Check RPC configuration.").format(**AEC)
 
 ### QUIT EVERYTHING, JUST IN CASE
-quit(u"\n")
+quit(u"")
 
 #
 # EOF
