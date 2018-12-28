@@ -5,12 +5,12 @@ import os.path, subprocess, time, urllib2, feedparser
 os.system("clear")
 
 ###  COLORED OUTPUT  ##############################################################################
-AEC = {"BLD":"\33[1m", "RED":"\33[91m", "YLW":"\33[93m", "CRS":"\33[39m", "RST":"\33[0m",}
+AEC = {"BLD":"\33[01m", "RED":"\33[91m", "YLW":"\33[93m", "CRS":"\33[39m", "RST":"\33[00m",}
 
 ###  CREDITS  #####################################################################################
 MODTIME = os.path.getmtime(__file__)
 PRONAME = os.path.basename(__file__)
-VERSION = "v4.4"
+VERSION = "v5.0"
 
 print(u"""
  {BLD}""" + PRONAME + """, """ + VERSION + """{RST} | EZTV Torrent Downloader
@@ -37,8 +37,8 @@ RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
 TOR_WRITE = "ON"					# Keep magnet URIs in Torrent DB   [ON|OFF]
 LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
 DAYS2KEEP = "2"						# Clean history log after x days
-FILTER_TR = "ON"					# Activate filter (needs FILTERSTR)[ON|OFF]
-FILTERSTR = "480p, 720p, 1080p, .avi$, iP.WEB-DL"	# Do NOT download FILENAMES w/ these tags
+FILTER_TR = "ON"					# Activate filter (need FILTERARR) [ON|OFF]
+FILTERARR = ("480p","720p","1080p",".avi$","iP.WEB-DL")	# Do NOT download FILENAMES w/ these tags
 
 ###  TRANSMISSION DAEMON  #########################################################################
 ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
@@ -134,7 +134,7 @@ try:
 				
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
 				if (FILTER_TR == "ON"):
-					if (any(FILTER in XML_FILE for FILTER in FILTERSTR)):
+					if (any(FILTER in XML_FILE for FILTER in FILTERARR)):
 						FILTER_SPC = "1"
 						print(u"      {BLD}{YLW}\u26a0 {YLW}FILTERED{RST} : " + XML_FILE).format(**AEC)[:95] + " ..."
 						continue
@@ -150,6 +150,8 @@ try:
 					HASH = HASH.strip()
 					if len(HASH):
 						HISTORYLOG.append(HASH)
+				#HISTORYLOG = map(str.upper, HISTORY)
+
 				HISTORY.close()
 				
 				###  Check the HISTORY LOG for already downloaded torrents
@@ -180,8 +182,8 @@ try:
 				MAGNETDB.close()
 			
 			except IOError:
-				quit(u"     {BLD}{RED} \u2716 {CRS}" + TORRENTDB + " was {RED}NOTT ACCESSIBLE{RST}").format(**AEC)
-			
+				print(u"     {BLD}{RED} \u2716 {CRS}" + TORRENTDB + " was {RED}NOTT ACCESSIBLE{RST}").format(**AEC)
+				
 			
 		### Write the HISTORY LOG. We DO NOT WANT to DOWNLOAD torrents twice
 		if (LOG_WRITE == "ON"):
@@ -192,8 +194,8 @@ try:
 				LOGDB.close()
 			
 			except IOError:
-				quit(u"     {BLD}{RED} \u2716 {CRS}" + HASHESLOG + " was {RED}NOT ACCESSIBLE{RST}").format(**AEC)
-		
+				print(u"     {BLD}{RED} \u2716 {CRS}" + HASHESLOG + " was {RED}NOT ACCESSIBLE{RST}").format(**AEC)
+				
 		###  TITLES of TORRENT DOWNLOADS
 		LOGRESULTS.append(TORRENTSDT[TOR]["TITLE"])
 		
@@ -223,7 +225,7 @@ if (ADDMAGNET == "ON"):
 	TRANSMISSION_REMOTE = subprocess.call(["which", "transmission-remote"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	
 	if (TRANSMISSION_REMOTE != 0):
-		quit(u"\n     {BLD}{RED} \u2716 {CRS}transmission-remote is {RED}MISSING{RST}. Install before continuing.\n").format(**AEC)
+		print(u"\n     {BLD}{RED} \u2716 {CRS}transmission-remote is {RED}MISSING{RST}. Install before continuing.\n").format(**AEC)
 		
 	else:
 		try:
@@ -243,7 +245,7 @@ if (ADDMAGNET == "ON"):
 				print(u"     {BLD} TORRENTS {RED}ADDED{CRS} to Transmission BT Daemon{RST}").format(**AEC)	
 		
 		except:
-			quit(u"     {BLD}{RED} \u2716 {RST}Could NOT connect to Transmission. Check RPC configuration.\n").format(**AEC)
+			print(u"     {BLD}{RED} \u2716 {RST}Could NOT connect to Transmission. Check RPC configuration.\n").format(**AEC)
 
 ### QUIT EVERYTHING, JUST IN CASE
 quit(u"\n")
