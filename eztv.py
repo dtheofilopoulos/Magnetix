@@ -38,7 +38,7 @@ TOR_WRITE = "ON"					# Keep magnet URIs in Torrent DB   [ON|OFF]
 LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
 DAYS2KEEP = "2"						# Clean history log after x days
 FILTER_TR = "ON"					# Activate filter (need FILTERARR) [ON|OFF]
-FILTERARR = ("480p","720p","1080p",".avi$","iP.WEB-DL")	# Do NOT download FILENAMES w/ these tags
+FILTERARR = ["480p","720p","1080p",".avi$","iP.WEB-DL"]	# Do NOT download FILENAMES w/ these tags
 
 ###  TRANSMISSION DAEMON  #########################################################################
 ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
