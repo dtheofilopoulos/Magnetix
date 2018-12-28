@@ -10,7 +10,7 @@ AEC = {"BLD":"\33[01m", "RED":"\33[91m", "GRN":"\33[92m", "YLW":"\33[93m", "RSC"
 ###  CREDITS  #####################################################################################
 MODTIME = os.path.getmtime(__file__)
 PRONAME = os.path.basename(__file__)
-VERSION = "v5.0"
+VERSION = "v2.1"
 
 print(u"""
  {BLD}""" + PRONAME + """, """ + VERSION + """{RST} | EZTV Torrent Downloader
