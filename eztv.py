@@ -59,18 +59,24 @@ FILTER_SPC = []
 if (not os.path.exists(DIRECTORY)):
 	os.makedirs(DIRECTORY)
 
+	
 ###  Print the WATCHLIST
 print(u" :::  {BLD}TV SERIES WATCHLIST{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::").format(**AEC)
 print(u"")
 try:
 	with open(WATCHLIST, "r") as TVSERIES:
 		TVSERIESDB = TVSERIES.read().splitlines()
-		if len(TVSERIESDB):
-			print(u"\n".join("      %-25s %s"%(TVSERIESDB[i],TVSERIESDB[i+len(TVSERIESDB)/2]) for i in range(len(TVSERIESDB)/2)))
+		TVSERIESIZ = len(TVSERIESDB)
+		if TVSERIESIZ:
+			if TVSERIESIZ <= int(1):
+				for TVSERIES in TVSERIESDB:
+					print(u"      " + TVSERIES.strip("\n"))
+			else:
+				print(u"\n".join("      %-25s %s"%(TVSERIESDB[i],TVSERIESDB[i+len(TVSERIESDB)/2]) for i in range(len(TVSERIESDB)/2)))
 		
 		else:
 			print(u"     {BLD}{YLW} \u26a0 {RST}" + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC)
-			print(u"     {BLD}{YLW} \u26a0 ADD{RSC} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC)
+			print(u"     {BLD}{YLW} \u26a0 ADD{RST} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC)
 			quit(u"")
 		
 except IOError:
