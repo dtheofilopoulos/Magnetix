@@ -67,7 +67,7 @@ try:
 		TVSERIESDB = TVSERIES.read().splitlines()
 		
 		if len(TVSERIESDB):
-			subprocess.call("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74",shell=True)
+			subprocess.call("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | sed -e 's/^/      /g' | column -c 80",shell=True)
 			
 		else:
 			print(u"     {BLD}{YLW} \u26a0 {RSC}" + WATCHLIST + " is {YLW}EMPTY{RST}").format(**AEC)
