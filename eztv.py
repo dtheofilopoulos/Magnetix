@@ -45,14 +45,13 @@ ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
 TRAN_HOST = "192.168.2.100"				# Transmission Daemon Host
 TRAN_PORT = "9091"					# Transmission Daemon Port
 USERNAME  = "transmission"				# Transmission Daemon Username
-PASSWORD  = "jeltzpass"					# Transmission Daemon Password
+PASSWORD  = "transmission"				# Transmission Daemon Password
 
 ###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
 TORRENT_DB = []
 HISTORYLOG = []
 TORRENTSDT = {}
-WATCH_SIZE = "0"
 FILTER_SPC = "0"
 
 
@@ -62,30 +61,25 @@ if (not os.path.exists(DIRECTORY)):
 
 ###  Print the WATCHLIST
 print(u" :::  {BLD}TV SERIES WATCHLIST{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::").format(**AEC)
+print(u"")
 try:
-	LIST = open(WATCHLIST, "r")
-	for SERIES in sorted(LIST):
-		SERIES = SERIES.strip()
-		if len(SERIES):
-			WATCH_SIZE = "1"			
-			###  Make the TITLES lowercase for easier comparison
-			TVSERIESDB.append(SERIES.lower())
-		LIST.close()
-	print(u"")
-	
-	### need to revisit this bit of code at some point...
-	if (WATCH_SIZE == "1"):
-		subprocess.call("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74",shell=True)
-	
-	else:
-		print(u"     {BLD}{YLW} \u26a0 {RSC}" + WATCHLIST + " is {YLW}EMPTY{RST}").format(**AEC)
-		print(u"     {BLD}{YLW} \u26a0 ADD{RSC} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC)
-	print(u"")
+	with open(WATCHLIST, "r") as TVSERIES:
+		TVSERIESDB = TVSERIES.read().splitlines()
+		
+		if len(TVSERIESDB):
+			subprocess.call("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | cut -c -17 | sed -e 's/^/      /g' | column -c 74",shell=True)
+			
+		else:
+			print(u"     {BLD}{YLW} \u26a0 {RSC}" + WATCHLIST + " is {YLW}EMPTY{RST}").format(**AEC)
+			print(u"     {BLD}{YLW} \u26a0 ADD{RSC} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC)
+			quit(u"")
 	
 except IOError:
-	print(u"\n     {BLD}{RED} \u2716 {RSC}" + WATCHLIST + " {RED}NOT ACCESSIBLE{RST}").format(**AEC)
+	print(u"     {BLD}{RED} \u2716 {RSC}" + WATCHLIST + " {RED}NOT ACCESSIBLE{RST}").format(**AEC)
 	open(WATCHLIST, "w").close()
 	print(u"     {BLD}{RED} \u2716 {RSC}" + WATCHLIST + " was CREATED{RST}\n").format(**AEC)
+	quit(u"")
+print(u"")
 
 
 ###  if HASHESLOG has not been modified for more than x days, start CLEAN
@@ -145,12 +139,11 @@ try:
 					continue
 				
 				###  Load historical hashes
-				HISTORY = open(HASHESLOG, "r")
-				for HASH in HISTORY:
-					HASH = HASH.strip()
-					if len(HASH):
-						HISTORYLOG.append(HASH)
-				HISTORY.close()
+				with open(HASHESLOG, "r") as HISTORY:
+					for HASH in HISTORY:
+						HASH = HASH.strip()
+						if len(HASH):
+							HISTORYLOG.append(HASH)
 				
 				###  Check the HISTORY LOG for already downloaded torrents
 				if (XML_HASH in HISTORYLOG):
@@ -175,10 +168,9 @@ try:
 		### Write the TORRENT LOG. Append MAGNET URIs for MATCHED TORRENTS
 		if (TOR_WRITE == "ON"):
 			try:
-				MAGNETDB = open(TORRENTDB, "w")
-				for MAGNETURI in TORRENT_DB:
-					MAGNETDB.write(MAGNETURI + "\n")
-				MAGNETDB.close()
+				with open(TORRENTDB, "w") as MAGNETDB:
+					for MAGNETURI in TORRENT_DB:
+						MAGNETDB.write(MAGNETURI + "\n")
 			
 			except IOError:
 				print(u"     {BLD}{RED} \u2716 {RSC}" + TORRENTDB + " was {RED}NOTT ACCESSIBLE{RST}").format(**AEC)
@@ -187,10 +179,9 @@ try:
 		### Write the HISTORY LOG. We DO NOT WANT to DOWNLOAD torrents twice
 		if (LOG_WRITE == "ON"):
 			try:
-				LOGDB = open(HASHESLOG, "w")
-				for HASH in HISTORYLOG:
-					LOGDB.write(HASH + "\n")
-				LOGDB.close()
+				with open(HASHESLOG, "w") as LOGDB:
+					for HASH in HISTORYLOG:
+						LOGDB.write(HASH + "\n")
 			
 			except IOError:
 				print(u"     {BLD}{RED} \u2716 {RSC}" + HASHESLOG + " was {RED}NOT ACCESSIBLE{RST}").format(**AEC)
@@ -230,16 +221,15 @@ if (ADDMAGNET == "ON"):
 		try:
 			subprocess.check_call("nc -w 3 -vz " + TRAN_HOST + " " + TRAN_PORT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
 			if (os.path.getsize(TORRENTDB) > 0):
-				MAGNETDB = open(TORRENTDB, "r")
-				for TORR in MAGNETDB:
-					TORR = TORR.strip()
-					if len(TORR):
-						TRANSMISSION = "transmission-remote " + TRAN_HOST + ":" + TRAN_PORT + " --auth " + USERNAME + ":" + PASSWORD + " --add " + TORR
-						subprocess.call(TRANSMISSION,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-						
-					###  Clear the magnet links database
-					open(TORRENTDB, "w").close()
-				MAGNETDB.close()
+				with open(TORRENTDB, "r") as MAGNETDB:
+					for TORR in MAGNETDB:
+						TORR = TORR.strip()
+						if len(TORR):
+							TRANSMISSION = "transmission-remote " + TRAN_HOST + ":" + TRAN_PORT + " --auth " + USERNAME + ":" + PASSWORD + " --add " + TORR
+							subprocess.call(TRANSMISSION,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+							
+							###  Clear the magnet links database
+							open(TORRENTDB, "w").close()
 			
 				print(u"     {BLD}{GRN} \u263c {RSC}TORRENTS {GRN}ADDED{RST} remotely to Transmission Daemon").format(**AEC)	
 		
@@ -247,7 +237,7 @@ if (ADDMAGNET == "ON"):
 			print(u"     {BLD}{RED} \u2716 CONNECTION{RSC} to Transmission Daemon {RED}FAILED{RST}. Check RPC configuration.").format(**AEC)
 
 ### QUIT EVERYTHING, JUST IN CASE
-quit(u"")
+quit(u"\n")
 
 #
 # EOF
