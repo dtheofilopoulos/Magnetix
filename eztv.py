@@ -10,7 +10,7 @@ AEC = {"BLD":"\33[01m", "RED":"\33[91m", "GRN":"\33[92m", "YLW":"\33[93m", "RSC"
 ###  CREDITS  #####################################################################################
 MODTIME = os.path.getmtime(__file__)
 PRONAME = os.path.basename(__file__)
-VERSION = "v2.1"
+VERSION = "v2.2"
 
 print(u"""
  {BLD}""" + PRONAME + """, """ + VERSION + """{RST} | EZTV Torrent Downloader
@@ -37,8 +37,8 @@ RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
 TOR_WRITE = "ON"					# Keep magnet URIs in Torrent DB   [ON|OFF]
 LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
 DAYS2KEEP = "2"						# Clean history log after x days
-FILTER_TR = "ON"					# Activate filter (need FILTERARR) [ON|OFF]
-FILTERARR = ["480p","720p","1080p",".avi$","iP.WEB-DL"]	# Do NOT download FILENAMES w/ these tags
+FILTER_TR = "ON"					# Activate filter (need FILTERLST) [ON|OFF]
+FILTERLST = ["480p","720p","1080p",".avi$","iP.WEB-DL"]	# Do NOT download FILENAMES w/ these tags
 
 ###  TRANSMISSION DAEMON  #########################################################################
 ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
@@ -52,7 +52,7 @@ TVSERIESDB = []
 TORRENT_DB = []
 HISTORYLOG = []
 TORRENTSDT = {}
-FILTER_SPC = "0"
+FILTER_SPC = []
 
 
 ###  Create data directory for the script if it does not exist
@@ -65,41 +65,39 @@ print(u"")
 try:
 	with open(WATCHLIST, "r") as TVSERIES:
 		TVSERIESDB = TVSERIES.read().splitlines()
-		
 		if len(TVSERIESDB):
-			subprocess.call("more -scfl " + str(WATCHLIST) + " | sort -ubdfV | sed -e 's/^/      /g' | column -c 80",shell=True)
-			
+			print(u"\n".join("      %-25s %s"%(TVSERIESDB[i],TVSERIESDB[i+len(TVSERIESDB)/2]) for i in range(len(TVSERIESDB)/2)))
+		
 		else:
-			print(u"     {BLD}{YLW} \u26a0 {RSC}" + WATCHLIST + " is {YLW}EMPTY{RST}").format(**AEC)
+			print(u"     {BLD}{YLW} \u26a0 {RST}" + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC)
 			print(u"     {BLD}{YLW} \u26a0 ADD{RSC} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC)
 			quit(u"")
-	
+		
 except IOError:
-	print(u"     {BLD}{RED} \u2716 {RSC}" + WATCHLIST + " {RED}NOT ACCESSIBLE{RST}").format(**AEC)
+	print(u"     {BLD}{RED} \u2716 {RST}" + WATCHLIST + " {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
 	open(WATCHLIST, "w").close()
-	print(u"     {BLD}{RED} \u2716 {RSC}" + WATCHLIST + " was CREATED{RST}\n").format(**AEC)
-	quit(u"")
+	print(u"     {BLD}{RED} \u2716 {RST}" + WATCHLIST + " was {BLD}{GRN}CREATED{RST}").format(**AEC)
+	quit(u"\n")
 print(u"")
 
 
+print(u"\n :::  {BLD}TV SERIES MATCHES{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::::\n").format(**AEC)
 ###  if HASHESLOG has not been modified for more than x days, start CLEAN
 if (LOG_WRITE == "ON"):
 	try:
 		CUR_TIME = time.time()
 		MOD_TIME = os.path.getmtime(HASHESLOG)
-	
-		if (CUR_TIME - MOD_TIME >= DAYS2KEEP * 24 * 3600):
-			
+		
+		if (CUR_TIME - MOD_TIME >= int(DAYS2KEEP) * 24 * 3600):
 			open(HASHESLOG, "w").close()
-			print(u"     {BLD}{YLW} \u26a0 {RSC}" + HASHESLOG + " was TRUNCATED{RST}").format(**AEC)
+			print(u"     {BLD}{YLW} \u26a0 {RST}" + HASHESLOG + " was {BLD}{YLW}TRUNCATED{RST}").format(**AEC)
 		
 	except:
-		print(u"     {BLD}{RED} \u2716 {RSC}" + HASHESLOG + " was {RED}NOT ACCESSIBLE{RST}").format(**AEC)
+		print(u"     {BLD}{RED} \u2716 {RST}" + HASHESLOG + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
 		open(HASHESLOG, "w").close()
-		print(u"     {BLD}{RED} \u2716 {RSC}" + HASHESLOG + " was CREATED{RST}\n").format(**AEC)
+		print(u"     {BLD}{RED} \u2716 {RST}" + HASHESLOG + " was {BLD}{GRN}CREATED{RST}\n").format(**AEC)
 
 
-print(u"\n :::  {BLD}TV SERIES MATCHES{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::::\n").format(**AEC)
 ###  Check the EZTV RSS2.0 URI and parse the XML
 try:
 	URIHEADER = { "User-Agent": "Links (2.7; Linux; text)", "Content-Type": "text/xml", "pragma-directive": "no-cache" }
@@ -128,7 +126,7 @@ try:
 				
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
 				if (FILTER_TR == "ON"):
-					if (any(FILTER in XML_FILE for FILTER in FILTERARR)):
+					if (any(FILTER in XML_FILE for FILTER in FILTERLST)):
 						FILTER_SPC = "1"
 						print(u"      {RED}\u2716 FILTERED{RST} : " + XML_FILE).format(**AEC)[:99]
 						continue
@@ -173,7 +171,7 @@ try:
 						MAGNETDB.write(MAGNETURI + "\n")
 			
 			except IOError:
-				print(u"     {BLD}{RED} \u2716 {RSC}" + TORRENTDB + " was {RED}NOTT ACCESSIBLE{RST}").format(**AEC)
+				print(u"     {BLD}{RED} \u2716 {RST}" + TORRENTDB + " was {BLD}{RED}NOTT ACCESSIBLE{RST}").format(**AEC)
 				
 			
 		### Write the HISTORY LOG. We DO NOT WANT to DOWNLOAD torrents twice
@@ -184,7 +182,7 @@ try:
 						LOGDB.write(HASH + "\n")
 			
 			except IOError:
-				print(u"     {BLD}{RED} \u2716 {RSC}" + HASHESLOG + " was {RED}NOT ACCESSIBLE{RST}").format(**AEC)
+				print(u"     {BLD}{RED} \u2716 {RST}" + HASHESLOG + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
 				
 		###  TITLES of TORRENT DOWNLOADS
 		LOGRESULTS.append(TORRENTSDT[TOR]["TITLE"])
