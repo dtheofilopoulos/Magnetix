@@ -180,7 +180,7 @@ try:
 						MAGNETDB.write(MAGNETURI + "\n")
 			
 			except IOError:
-				print(u"     {BLD}{RED} {ERROR} {RST}" + TORRENTDB + " was {BLD}{RED}NOTT ACCESSIBLE{RST}").format(**AEC)
+				print(u"     {BLD}{RED} {ERROR} {RST}" + TORRENTDB + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
 				
 			
 		### Write the HISTORY LOG. We DO NOT WANT to DOWNLOAD torrents twice
