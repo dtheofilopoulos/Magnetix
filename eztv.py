@@ -1,16 +1,19 @@
 #!/usr/bin/env python
-#coding = utf8
+#encoding = utf8
 import os.path, subprocess, time, urllib2, feedparser
 
 os.system("clear")
 
 ###  COLORED OUTPUT  ##############################################################################
-AEC = {"BLD":"\33[01m", "RED":"\33[91m", "GRN":"\33[92m", "YLW":"\33[93m", "RSC":"\33[39m", "RST":"\33[00m",}
+AEC = {
+	"BLD":"\33[01m", "RED":"\33[91m", "GRN":"\33[92m", "YLW":"\33[93m", "RSC":"\33[39m", "RST":"\33[00m",
+	"PASS":"\u263c","WARN":"\u26a0","ERROR":"\u2716",
+}
 
 ###  CREDITS  #####################################################################################
 MODTIME = os.path.getmtime(__file__)
 PRONAME = os.path.basename(__file__)
-VERSION = "v2.2"
+VERSION = "v2.1"
 
 print(u"""
  {BLD}""" + PRONAME + """, """ + VERSION + """{RST} | EZTV Torrent Downloader
@@ -59,7 +62,6 @@ FILTER_SPC = []
 if (not os.path.exists(DIRECTORY)):
 	os.makedirs(DIRECTORY)
 
-	
 ###  Print the WATCHLIST
 print(u" :::  {BLD}TV SERIES WATCHLIST{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::").format(**AEC)
 print(u"")
@@ -75,14 +77,14 @@ try:
 				print(u"\n".join("      %-25s %s"%(TVSERIESDB[i],TVSERIESDB[i+len(TVSERIESDB)/2]) for i in range(len(TVSERIESDB)/2)))
 		
 		else:
-			print(u"     {BLD}{YLW} \u26a0 {RST}" + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC)
-			print(u"     {BLD}{YLW} \u26a0 ADD{RST} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC)
+			print(u"     {BLD}{YLW} {WARN} {RST}" + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC)
+			print(u"     {BLD}{YLW} {WARN} ADD{RST} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC)
 			quit(u"")
 		
 except IOError:
-	print(u"     {BLD}{RED} \u2716 {RST}" + WATCHLIST + " {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
+	print(u"     {BLD}{RED} {ERROR} {RST}" + WATCHLIST + " {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
 	open(WATCHLIST, "w").close()
-	print(u"     {BLD}{RED} \u2716 {RST}" + WATCHLIST + " was {BLD}{GRN}CREATED{RST}").format(**AEC)
+	print(u"     {BLD}{RED} {ERROR} {RST}" + WATCHLIST + " was {BLD}{GRN}CREATED{RST}").format(**AEC)
 	quit(u"\n")
 print(u"")
 
@@ -96,12 +98,12 @@ if (LOG_WRITE == "ON"):
 		
 		if (CUR_TIME - MOD_TIME >= int(DAYS2KEEP) * 24 * 3600):
 			open(HASHESLOG, "w").close()
-			print(u"     {BLD}{YLW} \u26a0 {RST}" + HASHESLOG + " was {BLD}{YLW}TRUNCATED{RST}").format(**AEC)
+			print(u"     {BLD}{YLW} {WARN} {RST}" + HASHESLOG + " was {BLD}{YLW}TRUNCATED{RST}").format(**AEC)
 		
 	except:
-		print(u"     {BLD}{RED} \u2716 {RST}" + HASHESLOG + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
+		print(u"     {BLD}{RED} {ERROR} {RST}" + HASHESLOG + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
 		open(HASHESLOG, "w").close()
-		print(u"     {BLD}{RED} \u2716 {RST}" + HASHESLOG + " was {BLD}{GRN}CREATED{RST}\n").format(**AEC)
+		print(u"     {BLD}{RED} {ERROR} {RST}" + HASHESLOG + " was {BLD}{GRN}CREATED{RST}\n").format(**AEC)
 
 
 ###  Check the EZTV RSS2.0 URI and parse the XML
@@ -113,7 +115,7 @@ try:
 	XML_PARSED = feedparser.parse(XML).entries[:50]
 	
 except:
-	print(u"     {BLD}{RED} \u2716 {RSC}HTTP STATUS {RED}504{RSC}: GATEWAY TIMEOUT{RST} for URI " + str(RSSXMLURI)).format(**AEC)
+	print(u"     {BLD}{RED} {ERROR} {RSC}HTTP STATUS {RED}504{RSC}: GATEWAY TIMEOUT{RST} for URI " + str(RSSXMLURI)).format(**AEC)
 
 
 try:
@@ -134,12 +136,12 @@ try:
 				if (FILTER_TR == "ON"):
 					if (any(FILTER in XML_FILE for FILTER in FILTERLST)):
 						FILTER_SPC = "1"
-						print(u"      {RED}\u2716 FILTERED{RST} : " + XML_FILE).format(**AEC)[:99]
+						print(u"      {RED}{ERROR} FILTERED{RST} : " + XML_FILE).format(**AEC)[:89]
 						continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML, filter out the problematic torrent
 				if (XML_MAGN == ""):
-					print(u"      {RED}\u2716 NOMAGNET{RST} : " + XML_FILE).format(**AEC)[:99]
+					print(u"      {RED}{ERROR} NOMAGNET{RST} : " + XML_FILE).format(**AEC)[:89]
 					continue
 				
 				###  Load historical hashes
@@ -151,7 +153,7 @@ try:
 				
 				###  Check the HISTORY LOG for already downloaded torrents
 				if (XML_HASH in HISTORYLOG):
-					print(u"      {YLW}\u26a0 EXISTING{RST} : " + XML_FILE).format(**AEC)[:99]
+					print(u"      {YLW}{WARN} EXISTING{RST} : " + XML_FILE).format(**AEC)[:89]
 					continue
 				else:
 					HISTORYLOG.append(XML_HASH)
@@ -177,7 +179,7 @@ try:
 						MAGNETDB.write(MAGNETURI + "\n")
 			
 			except IOError:
-				print(u"     {BLD}{RED} \u2716 {RST}" + TORRENTDB + " was {BLD}{RED}NOTT ACCESSIBLE{RST}").format(**AEC)
+				print(u"     {BLD}{RED} {ERROR} {RST}" + TORRENTDB + " was {BLD}{RED}NOTT ACCESSIBLE{RST}").format(**AEC)
 				
 			
 		### Write the HISTORY LOG. We DO NOT WANT to DOWNLOAD torrents twice
@@ -188,7 +190,7 @@ try:
 						LOGDB.write(HASH + "\n")
 			
 			except IOError:
-				print(u"     {BLD}{RED} \u2716 {RST}" + HASHESLOG + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
+				print(u"     {BLD}{RED} {ERROR} {RST}" + HASHESLOG + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
 				
 		###  TITLES of TORRENT DOWNLOADS
 		LOGRESULTS.append(TORRENTSDT[TOR]["TITLE"])
@@ -202,15 +204,15 @@ try:
 		print(u"     {BLD}{GRN} " + str(len(LOGRESULTS)) + " {RSC}TORRENTS{RST} match your TV series watchlist criteria\n").format(**AEC)
 		i = 1
 		for RESULT in LOGRESULTS:
-			print(u"      {BLD}" + str(i).zfill(2) + "{RST}. " + RESULT).format(**AEC)
+			print(u"      {BLD}" + str(i).zfill(2) + "{RST}. " + RESULT).format(**AEC)[:89]
 			i += 1
 		print(u"")
 	else:
-		print(u"     {BLD}{YLW} \u26a0 NO {RSC}TORRENTS{RST} match your TV series watchlist criteria").format(**AEC)
+		print(u"     {BLD}{YLW} {WARN} NO {RSC}TORRENTS{RST} match your TV series watchlist criteria").format(**AEC)
 
 
 except:
-	print(u"     {BLD}{RED} \u2716 CANNOT{RSC} match torrents due to an {RED}ERROR{RST}").format(**AEC)
+	print(u"     {BLD}{RED} {ERROR} CANNOT{RSC} match torrents due to an {RED}ERROR{RST}").format(**AEC)
 
 
 ###  TRANSMISSION REMOTE
@@ -219,7 +221,7 @@ if (ADDMAGNET == "ON"):
 	TRANSMISSION_REMOTE = subprocess.call(["which", "transmission-remote"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	
 	if (TRANSMISSION_REMOTE != 0):
-		print(u"\n     {BLD}{RED} \u2716 {RSC}transmission-remote is {RED}MISSING{RST}. Install before continuing.\n").format(**AEC)
+		print(u"\n     {BLD}{RED} {ERROR} {RSC}transmission-remote is {RED}MISSING{RST}. Install before continuing.\n").format(**AEC)
 		
 	else:
 		try:
@@ -235,10 +237,10 @@ if (ADDMAGNET == "ON"):
 							###  Clear the magnet links database
 							open(TORRENTDB, "w").close()
 			
-				print(u"     {BLD}{GRN} \u263c {RSC}TORRENTS {GRN}ADDED{RST} remotely to Transmission Daemon").format(**AEC)	
+				print(u"     {BLD}{GRN} {PASS} {RSC}TORRENTS {GRN}ADDED{RST} remotely to Transmission Daemon").format(**AEC)	
 		
 		except:
-			print(u"     {BLD}{RED} \u2716 CONNECTION{RSC} to Transmission Daemon {RED}FAILED{RST}. Check RPC configuration.").format(**AEC)
+			print(u"     {BLD}{RED} {ERROR} CONNECTION{RSC} to Transmission Daemon {RED}FAILED{RST}. Check RPC configuration.").format(**AEC)
 
 ### QUIT EVERYTHING, JUST IN CASE
 quit(u"\n")
