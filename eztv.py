@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-#encoding = utf8
+# -*- coding: utf-8 -*-
+
 import os.path, subprocess, time, urllib2, feedparser
 
 os.system("clear")
@@ -7,7 +8,7 @@ os.system("clear")
 ###  COLORED OUTPUT  ##############################################################################
 AEC = {
 	"BLD":"\33[01m", "RED":"\33[91m", "GRN":"\33[92m", "YLW":"\33[93m", "RSC":"\33[39m", "RST":"\33[00m",
-	"PASS":"\u263c","WARN":"\u26a0","ERROR":"\u2716",
+	"PASS":"[*]","WARN":"[w]","ERROR":"[x]",
 }
 
 ###  CREDITS  #####################################################################################
