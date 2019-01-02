@@ -111,7 +111,7 @@ if (LOG_WRITE == "ON"):
 
 ###  Check the EZTV RSS2.0 URI and parse the XML
 try:
-	URIHEADER = { "User-Agent": "Links (2.7; Linux; text)", "pragma-directive": "no-cache" }
+	URIHEADER = { "User-Agent": "Links (2.7; Linux; text)", "Content-Type": "text/xml", "pragma-directive": "no-cache" }
 	XML = urllib2.urlopen(urllib2.Request(RSSXMLURI, headers=URIHEADER), timeout=15)
 	
 	###  Parse the XML for a limit of 50 entries
