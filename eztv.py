@@ -14,7 +14,7 @@ AEC = {
 ###  CREDITS  #####################################################################################
 MODTIME = os.path.getmtime(__file__)
 PRONAME = os.path.basename(__file__)
-VERSION = "v2.1"
+VERSION = "v2.2"
 
 print(u"""
  {BLD}""" + PRONAME + """, """ + VERSION + """{RST} | EZTV Torrent Downloader
@@ -68,7 +68,8 @@ print(u" :::  {BLD}TV SERIES WATCHLIST{RST}  :::::::::::::::::::::::::::::::::::
 print(u"")
 try:
 	with open(WATCHLIST, "r") as TVSERIES:
-		TVSERIESDB = TVSERIES.read().splitlines()
+		###  Alphabetical listing of watchlist
+		TVSERIESDB = sorted(TVSERIES.read().splitlines())
 		TVSERIESIZ = len(TVSERIESDB)
 		if TVSERIESIZ:
 			if TVSERIESIZ <= int(1):
@@ -135,14 +136,15 @@ try:
 				
 				###  DO NOT download FILTERED names (using filename for consistency reasons)
 				if (FILTER_TR == "ON"):
+					
 					if (any(FILTER in XML_FILE for FILTER in FILTERLST)):
 						FILTER_SPC = "1"
-						print(u"      {RED}{ERROR} FILTERED{RST} : " + XML_FILE).format(**AEC)[:89]
+						print(u"     {RED} {ERROR} FILTERED{RST} | " + XML_FILE).format(**AEC)[:89]
 						continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML, filter out the problematic torrent
 				if (XML_MAGN == ""):
-					print(u"      {RED}{ERROR} NOMAGNET{RST} : " + XML_FILE).format(**AEC)[:89]
+					print(u"     {RED} {ERROR} NOMAGNET{RST} | " + XML_FILE).format(**AEC)[:89]
 					continue
 				
 				###  Load historical hashes
@@ -154,7 +156,7 @@ try:
 				
 				###  Check the HISTORY LOG for already downloaded torrents
 				if (XML_HASH in HISTORYLOG):
-					print(u"      {YLW}{WARN} EXISTING{RST} : " + XML_FILE).format(**AEC)[:89]
+					print(u"     {YLW} {WARN} EXISTING{RST} | " + XML_FILE).format(**AEC)[:89]
 					continue
 				else:
 					HISTORYLOG.append(XML_HASH)
