@@ -5,29 +5,30 @@ import os.path, subprocess, time, urllib2, feedparser
 
 os.system("clear")
 
-###  COLORED OUTPUT  ##############################################################################
+###  FORMATTED TERMINAL OUTPUT  ###################################################################
 AEC = {
-	"BLD":"\33[01m", "RED":"\33[91m", "GRN":"\33[92m", "YLW":"\33[93m", "RSC":"\33[39m", "RST":"\33[00m",
-	"PASS":"[*]","WARN":"[w]","ERROR":"[x]",
+	"BLD":"\33[01m", "UND":"\33[04m",
+	"RED":"\33[91m", "GRN":"\33[92m", "YLW":"\33[93m", "BLU":"\33[94m",
+	"RSC":"\33[39m", "RST":"\33[00m",
+	"PASS":"[+]", "WARN":"[-]", "ERROR":"[x]",
 }
 
 ###  CREDITS  #####################################################################################
-MODTIME = os.path.getmtime(__file__)
 PRONAME = os.path.basename(__file__)
-VERSION = "v2.2"
+VERSION = "v2.3"
 
-print(u"""
+print("""
  {BLD}""" + PRONAME + """, """ + VERSION + """{RST} | EZTV Torrent Downloader
 
-	Downloads matching TV Series titles as soon as they air on eztv
-	and automatically queues them to a running transmission daemon
+	Downloads matching TV Series titles as soon as they air on eztv and
+	automatically queues the torrents to a running transmission daemon
 
-	License  | Dio ( classicrocker384@gmail.com ), 3-Clause BSD License
-	Revision | """ + str(time.strftime('%d/%m/%Y, %H:%M', time.localtime(MODTIME))) + """
-	Depends  | transmission-remote,
-	           os.path, subprocess, time, urllib2, feedparser
+	License  | Dio ( classicrocker384@gmail.com ), {UND}3-Clause BSD License{RST}
+	Revision | 02/01/2019, 22:37
+	Depends  | transmission-remote, kurtmackee/feedparser
 	
  ------------------------------------------------------------------------------
+
 """).format(**AEC)
 
 ###  CONFIGURATION  ###############################################################################
@@ -55,9 +56,8 @@ PASSWORD  = "transmission"				# Transmission Daemon Password
 TVSERIESDB = []
 TORRENT_DB = []
 HISTORYLOG = []
-TORRENTSDT = {}
 FILTER_SPC = []
-
+TORRENTSDT = {}
 
 ###  Create data directory for the script if it does not exist
 if (not os.path.exists(DIRECTORY)):
@@ -70,13 +70,14 @@ try:
 	with open(WATCHLIST, "r") as TVSERIES:
 		###  Alphabetical listing of watchlist
 		TVSERIESDB = sorted(TVSERIES.read().splitlines())
-		TVSERIESIZ = len(TVSERIESDB)
-		if TVSERIESIZ:
-			if TVSERIESIZ <= int(1):
+		
+		if len(TVSERIESDB):
+			if len(TVSERIESDB) <= int(1):
 				for TVSERIES in TVSERIESDB:
 					print(u"      " + TVSERIES.strip("\n"))
+				
 			else:
-				print(u"\n".join("      %-25s %s"%(TVSERIESDB[i],TVSERIESDB[i+len(TVSERIESDB)/2]) for i in range(len(TVSERIESDB)/2)))
+				print(u"\n".join("      %-30s %s"%(TVSERIESDB[i],TVSERIESDB[i+len(TVSERIESDB)/2]) for i in range(len(TVSERIESDB)/2)))
 		
 		else:
 			print(u"     {BLD}{YLW} {WARN} {RST}" + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC)
@@ -110,7 +111,7 @@ if (LOG_WRITE == "ON"):
 
 ###  Check the EZTV RSS2.0 URI and parse the XML
 try:
-	URIHEADER = { "User-Agent": "Links (2.7; Linux; text)", "Content-Type": "text/xml", "pragma-directive": "no-cache" }
+	URIHEADER = { "User-Agent": "Links (2.7; Linux; text)", "pragma-directive": "no-cache" }
 	XML = urllib2.urlopen(urllib2.Request(RSSXMLURI, headers=URIHEADER), timeout=15)
 	
 	###  Parse the XML for a limit of 50 entries
