@@ -50,7 +50,7 @@ ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
 TRAN_HOST = "192.168.2.100"				# Transmission Daemon Host
 TRAN_PORT = "9091"					# Transmission Daemon Port
 USERNAME  = "transmission"				# Transmission Daemon Username
-PASSWORD  = "transmission"				# Transmission Daemon Password
+PASSWORD  = "dHJhbnNtaXNzaW9u".decode("base64")		# Transmission Daemon Password (base64 encoded)
 
 ###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
@@ -157,6 +157,7 @@ try:
 				
 				###  Check the HISTORY LOG for already downloaded torrents
 				if (XML_HASH in HISTORYLOG):
+					FILTER_SPC = "1"
 					print(u"     {YLW} {WARN} EXISTING{RST} | " + XML_FILE).format(**AEC)[:89]
 					continue
 				else:
