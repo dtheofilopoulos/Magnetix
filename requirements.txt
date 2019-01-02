@@ -1,6 +1,2 @@
-os.path
-subprocess
-time
-urllib2
 feedparser
 transmission-remote
