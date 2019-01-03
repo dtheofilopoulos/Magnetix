@@ -1,5 +1,5 @@
 # magneticEZTV
-Downloads matching TV Series titles as soon as they air on eztv and automatically queues them in transmission daemon
+Downloads matching TV Series titles as soon as they air on eztv and automatically queues the torrents to a running transmission daemon
 
 Add TV series titles in series.db separated by a new line everytime.
 Tweak any settings you might need and run the python script.
