@@ -8,7 +8,7 @@ os.system("clear")
 ###  FORMATTED TERMINAL OUTPUT  ###################################################################
 AEC = {
 	"BLD":"\33[01m", "UND":"\33[04m",
-	"RED":"\33[91m", "GRN":"\33[92m", "YLW":"\33[93m", "BLU":"\33[94m",
+	"RED":"\33[91m", "GRN":"\33[92m", "YLW":"\33[93m", "BLU":"\33[94m", "CYN":"\33[36m",
 	"RSC":"\33[39m", "RST":"\33[00m",
 	"PASS":"[+]", "WARN":"[-]", "ERROR":"[x]",
 }
@@ -69,16 +69,13 @@ print(u"")
 try:
 	with open(WATCHLIST, "r") as TVSERIES:
 		###  Alphabetical listing of watchlist
-		TVSERIESDB = sorted(TVSERIES.read().splitlines())
+		TVSERIESDB = sorted(TVSERIES.read().strip().splitlines())
 		
 		if len(TVSERIESDB):
-			if len(TVSERIESDB) <= int(1):
-				for TVSERIES in TVSERIESDB:
-					print(u"      " + TVSERIES.strip("\n"))
-				
-			else:
-				print(u"\n".join("      %-30s %s"%(TVSERIESDB[i],TVSERIESDB[i+len(TVSERIESDB)/2]) for i in range(len(TVSERIESDB)/2)))
-		
+			i = 1
+			for TVSERIESTITLES in TVSERIESDB:
+				print(u"      " + str(i).zfill(2) + ". " + TVSERIESTITLES)
+				i += 1
 		else:
 			print(u"     {BLD}{YLW} {WARN} {RST}" + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC)
 			print(u"     {BLD}{YLW} {WARN} ADD{RST} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC)
@@ -140,12 +137,12 @@ try:
 					
 					if (any(FILTER in XML_FILE for FILTER in FILTERLST)):
 						FILTER_SPC = "1"
-						print(u"     {RED} {ERROR} FILTERED{RST} | " + XML_FILE).format(**AEC)[:89]
+						print(u"     {BLD}{CYN} {WARN} FILTERED{RST} | " + XML_FILE).format(**AEC)[:95]
 						continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML, filter out the problematic torrent
 				if (XML_MAGN == ""):
-					print(u"     {RED} {ERROR} NOMAGNET{RST} | " + XML_FILE).format(**AEC)[:89]
+					print(u"     {BLD}{RED} {ERROR} NOMAGNET{RST} | " + XML_FILE).format(**AEC)[:94]
 					continue
 				
 				###  Load historical hashes
@@ -158,7 +155,7 @@ try:
 				###  Check the HISTORY LOG for already downloaded torrents
 				if (XML_HASH in HISTORYLOG):
 					FILTER_SPC = "1"
-					print(u"     {YLW} {WARN} EXISTING{RST} | " + XML_FILE).format(**AEC)[:89]
+					print(u"     {BLD}{YLW} {WARN} EXISTING{RST} | " + XML_FILE).format(**AEC)[:95]
 					continue
 				else:
 					HISTORYLOG.append(XML_HASH)
@@ -217,35 +214,29 @@ try:
 
 
 except:
-	print(u"     {BLD}{RED} {ERROR} CANNOT{RSC} match torrents due to an {RED}ERROR{RST}").format(**AEC)
+	print(u"     {BLD}{RED} {ERROR} NO{RSC} TORRENTS{RST} can be matched. Should be a temporary error.").format(**AEC)
 
 
 ###  TRANSMISSION REMOTE
 if (ADDMAGNET == "ON"):
 	
-	TRANSMISSION_REMOTE = subprocess.call(["which", "transmission-remote"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	try:
+		subprocess.check_call("nc -w 3 -vz " + TRAN_HOST + " " + TRAN_PORT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+		if (os.path.getsize(TORRENTDB) > 0):
+			with open(TORRENTDB, "r") as MAGNETDB:
+				for TORR in MAGNETDB:
+					TORR = TORR.strip()
+					if len(TORR):
+						TRANSMISSION = "transmission-remote " + TRAN_HOST + ":" + TRAN_PORT + " --auth " + USERNAME + ":" + PASSWORD + " --add " + TORR
+						subprocess.call(TRANSMISSION,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+						
+						###  Clear the magnet links database
+						open(TORRENTDB, "w").close()
+		
+			print(u"     {BLD}{GRN} {PASS} {RSC}TORRENTS {GRN}ADDED{RST} remotely to Transmission Daemon").format(**AEC)	
 	
-	if (TRANSMISSION_REMOTE != 0):
-		print(u"\n     {BLD}{RED} {ERROR} {RSC}transmission-remote is {RED}MISSING{RST}. Install before continuing.\n").format(**AEC)
-		
-	else:
-		try:
-			subprocess.check_call("nc -w 3 -vz " + TRAN_HOST + " " + TRAN_PORT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-			if (os.path.getsize(TORRENTDB) > 0):
-				with open(TORRENTDB, "r") as MAGNETDB:
-					for TORR in MAGNETDB:
-						TORR = TORR.strip()
-						if len(TORR):
-							TRANSMISSION = "transmission-remote " + TRAN_HOST + ":" + TRAN_PORT + " --auth " + USERNAME + ":" + PASSWORD + " --add " + TORR
-							subprocess.call(TRANSMISSION,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-							
-							###  Clear the magnet links database
-							open(TORRENTDB, "w").close()
-			
-				print(u"     {BLD}{GRN} {PASS} {RSC}TORRENTS {GRN}ADDED{RST} remotely to Transmission Daemon").format(**AEC)	
-		
-		except:
-			print(u"     {BLD}{RED} {ERROR} CONNECTION{RSC} to Transmission Daemon {RED}FAILED{RST}. Check RPC configuration.").format(**AEC)
+	except:
+		print(u"     {BLD}{RED} {ERROR} CONNECTION{RSC} to Transmission Daemon {RED}FAILED{RST}. Check RPC configuration.").format(**AEC)
 
 ### QUIT EVERYTHING, JUST IN CASE
 quit(u"\n")
