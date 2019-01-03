@@ -1,6 +1,8 @@
 # magneticEZTV
 Downloads matching TV Series titles as soon as they air on eztv and automatically queues the torrents to a running transmission daemon
 
+I tried to write this python script with the most minimal approach to dependencies.
+
 Add TV series titles in series.db separated by a new line everytime.
 Tweak any settings you might need and run the python script.
 You should be able to collect matching magnet links in torrent.db
