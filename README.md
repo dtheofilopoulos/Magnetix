@@ -10,8 +10,6 @@ When torrent magnet links are present in torrent.db, magnet links will be passed
 Transmission remote is required for this to work. If successful, torrent.db will be truncated.
 
 # Cronjob
-You can then add the script to a cronjob and let the magic happen.
+You can then add the script to a cronjob (i.e. every five minutes) and let the magic happen.
 
-i.e. */5    *      *      *      *      /pathtoscript/eztv.py &>/dev/null;
-
-if you want to run the program every five minutes.
+*/5    *      *      *      *      /pathtoscript/eztv.py
