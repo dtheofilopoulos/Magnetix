@@ -26,7 +26,7 @@ print((
 
 	License  | Dio ( classicrocker384@gmail.com ), {UND}3-Clause BSD License{RST}
 	Revision | 25/11/2021, 19:46
-	Depends  | python, kurtmackee/feedparser, transmission-remote
+	Depends  | python, transmission-remote
 	
  ------------------------------------------------------------------------------
  """).format(**AEC))
