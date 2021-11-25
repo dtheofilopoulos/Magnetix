@@ -25,7 +25,7 @@ print((
 	automatically queues the torrents to a running transmission daemon
 
 	License  | Dio ( classicrocker384@gmail.com ), {UND}3-Clause BSD License{RST}
-	Revision | 25/11/2021, 19:46
+	Revision | """ + time.ctime(os.path.getmtime(__file__)) + """
 	Depends  | python, transmission-remote
 	
  ------------------------------------------------------------------------------
