@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os.path, subprocess, time, urllib2, feedparser
+import os.path, subprocess, time, feedparser
+from urllib.request import Request, urlopen
 
 os.system("clear")
 
@@ -17,19 +18,18 @@ AEC = {
 PRONAME = os.path.basename(__file__)
 VERSION = "v2.3"
 
-print("""
- {BLD}""" + PRONAME + """, """ + VERSION + """{RST} | EZTV Torrent Downloader
+print((
+ """{BLD}""" + PRONAME + """, """ + VERSION + """{RST} | EZTV Torrent Downloader
 
 	Downloads matching TV Series titles as soon as they air on eztv and
 	automatically queues the torrents to a running transmission daemon
 
 	License  | Dio ( classicrocker384@gmail.com ), {UND}3-Clause BSD License{RST}
-	Revision | 02/01/2019, 22:37
-	Depends  | transmission-remote, kurtmackee/feedparser
+	Revision | 25/11/2021, 19:46
+	Depends  | python, kurtmackee/feedparser, transmission-remote
 	
  ------------------------------------------------------------------------------
-
-""").format(**AEC)
+ """).format(**AEC))
 
 ###  CONFIGURATION  ###############################################################################
 DIRECTORY = os.path.dirname(__file__) + "/pyEZTV/"	# Absolute PATH of working directory
@@ -38,19 +38,19 @@ HASHESLOG = DIRECTORY + "torrent.log"			# History log of matched torrents w/ has
 TORRENTDB = DIRECTORY + "torrent.db"			# Matched torrents database w/ magnet links
 
 ###  SETTINGS  ####################################################################################
-RSSXMLURI = "https://eztv.io/ezrss.xml"			# RSS2.0 XML URI
+RSSXMLURI = "https://eztv.re/ezrss.xml"			# RSS2.0 XML URI
 TOR_WRITE = "ON"					# Keep magnet URIs in Torrent DB   [ON|OFF]
 LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
-DAYS2KEEP = "2"						# Clean history log after x days
-FILTER_TR = "ON"					# Activate filter (need FILTERLST) [ON|OFF]
-FILTERLST = ["480p","720p","1080p",".avi$","iP.WEB-DL"]	# Do NOT download FILENAMES w/ these tags
+DAYS2KEEP = "1"						# Clean history log after x days
+FILTER_TR = "ON"					# Activate filter (need BLACKLIST) [ON|OFF]
+BLACKLIST = ["x265",".avi$",]				# Do NOT download FILENAMES w/ these tags
 
 ###  TRANSMISSION DAEMON  #########################################################################
 ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
 TRAN_HOST = "192.168.2.100"				# Transmission Daemon Host
 TRAN_PORT = "9091"					# Transmission Daemon Port
 USERNAME  = "transmission"				# Transmission Daemon Username
-PASSWORD  = "dHJhbnNtaXNzaW9u".decode("base64")		# Transmission Daemon Password (base64 encoded)
+PASSWORD  = "yourpasswordgoeshere"			# Transmission Daemon Password
 
 ###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
@@ -64,7 +64,7 @@ if (not os.path.exists(DIRECTORY)):
 	os.makedirs(DIRECTORY)
 
 ###  Print the WATCHLIST
-print(u" :::  {BLD}TV SERIES WATCHLIST{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::").format(**AEC)
+print((u" :::  {BLD}TV SERIES WATCHLIST{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::").format(**AEC))
 print(u"")
 try:
 	with open(WATCHLIST, "r") as TVSERIES:
@@ -77,19 +77,19 @@ try:
 				print(u"      " + str(i).zfill(2) + ". " + TVSERIESTITLES)
 				i += 1
 		else:
-			print(u"     {BLD}{YLW} {WARN} {RST}" + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC)
-			print(u"     {BLD}{YLW} {WARN} ADD{RST} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC)
+			print((u"     {BLD}{YLW} {WARN} {RST}" + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC))
+			print((u"     {BLD}{YLW} {WARN} ADD{RST} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC))
 			quit(u"")
 		
 except IOError:
-	print(u"     {BLD}{RED} {ERROR} {RST}" + WATCHLIST + " {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
+	print((u"     {BLD}{RED} {ERROR} {RST}" + WATCHLIST + " {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC))
 	open(WATCHLIST, "w").close()
-	print(u"     {BLD}{RED} {ERROR} {RST}" + WATCHLIST + " was {BLD}{GRN}CREATED{RST}").format(**AEC)
+	print((u"     {BLD}{RED} {ERROR} {RST}" + WATCHLIST + " was {BLD}{GRN}CREATED{RST}").format(**AEC))
 	quit(u"\n")
 print(u"")
 
 
-print(u"\n :::  {BLD}TV SERIES MATCHES{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::::\n").format(**AEC)
+print((u"\n :::  {BLD}TV SERIES MATCHES{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::::\n").format(**AEC))
 ###  if HASHESLOG has not been modified for more than x days, start CLEAN
 if (LOG_WRITE == "ON"):
 	try:
@@ -98,51 +98,51 @@ if (LOG_WRITE == "ON"):
 		
 		if (CUR_TIME - MOD_TIME >= int(DAYS2KEEP) * 24 * 3600):
 			open(HASHESLOG, "w").close()
-			print(u"     {BLD}{YLW} {WARN} {RST}" + HASHESLOG + " was {BLD}{YLW}TRUNCATED{RST}").format(**AEC)
+			print((u"     {BLD}{YLW} {WARN} {RST}" + HASHESLOG + " was {BLD}{YLW}TRUNCATED{RST}").format(**AEC))
 		
 	except:
-		print(u"     {BLD}{RED} {ERROR} {RST}" + HASHESLOG + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
+		print((u"     {BLD}{RED} {ERROR} {RST}" + HASHESLOG + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC))
 		open(HASHESLOG, "w").close()
-		print(u"     {BLD}{RED} {ERROR} {RST}" + HASHESLOG + " was {BLD}{GRN}CREATED{RST}\n").format(**AEC)
+		print((u"     {BLD}{RED} {ERROR} {RST}" + HASHESLOG + " was {BLD}{GRN}CREATED{RST}\n").format(**AEC))
 
 
 ###  Check the EZTV RSS2.0 URI and parse the XML
 try:
-	URIHEADER = { "user-agent": "Links (2.7; Linux; text)", "content-type": "text/xml", "pragma-directive": "no-cache" }
-	XML = urllib2.urlopen(urllib2.Request(RSSXMLURI, headers=URIHEADER), timeout=15)
+	REQ = Request(RSSXMLURI, headers={'User-Agent': 'Mozilla/5.0'})
+	XML = urlopen(REQ,timeout=10).read()
 	
 	###  Parse the XML for a limit of 50 entries
 	XML_PARSED = feedparser.parse(XML).entries[:50]
 	
 except:
-	print(u"     {BLD}{RED} {ERROR} {RSC}HTTP STATUS {RED}504{RSC}: GATEWAY TIMEOUT{RST} for URI " + str(RSSXMLURI)).format(**AEC)
+	print((u"     {BLD}{RED} {ERROR} {RSC}HTTP STATUS {RED}504{RSC}: GATEWAY TIMEOUT{RST} for URI " + RSSXMLURI).format(**AEC))
 
 
 try:
 	for XMLENTRY in XML_PARSED:
 		
 		###  FETCH RSS VARIABLES
-		XMLTITLE = str(XMLENTRY.title)
-		XML_FILE = str(XMLENTRY.torrent_filename)
-		XML_HASH = str(XMLENTRY.torrent_infohash)
-		XML_MAGN = str(XMLENTRY.torrent_magneturi)			
+		XMLTITLE = XMLENTRY.title
+		XML_FILE = XMLENTRY.torrent_filename
+		XML_HASH = XMLENTRY.torrent_infohash
+		XML_MAGN = XMLENTRY.torrent_magneturi
 		
 		for SERIES in TVSERIESDB:
 			
-			###  make EZTV SERIES TITLES lowercase for easier comparison
+			###  make EZTV SERIES TITLES lowercase for easier regex
 			if (SERIES.lower() in XMLTITLE.lower()):
 				
-				###  DO NOT download FILTERED names (using filename for consistency reasons)
+				###  DO NOT download FILTERED names
 				if (FILTER_TR == "ON"):
 					
-					if (any(FILTER in XML_FILE for FILTER in FILTERLST)):
+					if (any(FILTER in XML_FILE.lower() for FILTER in BLACKLIST)):
 						FILTER_SPC = "1"
-						print(u"     {BLD}{CYN} {WARN} FILTERED{RST} | " + XML_FILE).format(**AEC)[:95]
+						print((u"     {BLD}{CYN} {WARN} FILTERED{RST} | " + XML_FILE).format(**AEC))[:95]
 						continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML, filter out the problematic torrent
 				if (XML_MAGN == ""):
-					print(u"     {BLD}{RED} {ERROR} NOMAGNET{RST} | " + XML_FILE).format(**AEC)[:94]
+					print((u"     {BLD}{RED} {ERROR} NOMAGNET{RST} | " + XML_FILE).format(**AEC))[:94]
 					continue
 				
 				###  Load historical hashes
@@ -155,7 +155,7 @@ try:
 				###  Check the HISTORY LOG for already downloaded torrents
 				if (XML_HASH in HISTORYLOG):
 					FILTER_SPC = "1"
-					print(u"     {BLD}{YLW} {WARN} EXISTING{RST} | " + XML_FILE).format(**AEC)[:95]
+					print((u"     {BLD}{YLW} {WARN} EXISTING{RST} | " + XML_FILE).format(**AEC))[:95]
 					continue
 				else:
 					HISTORYLOG.append(XML_HASH)
@@ -181,7 +181,7 @@ try:
 						MAGNETDB.write(MAGNETURI + "\n")
 			
 			except IOError:
-				print(u"     {BLD}{RED} {ERROR} {RST}" + TORRENTDB + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
+				print((u"     {BLD}{RED} {ERROR} {RST}" + TORRENTDB + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC))
 				
 			
 		### Write the HISTORY LOG. We DO NOT WANT to DOWNLOAD torrents twice
@@ -192,7 +192,7 @@ try:
 						LOGDB.write(HASH + "\n")
 			
 			except IOError:
-				print(u"     {BLD}{RED} {ERROR} {RST}" + HASHESLOG + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC)
+				print((u"     {BLD}{RED} {ERROR} {RST}" + HASHESLOG + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC))
 				
 		###  TITLES of TORRENT DOWNLOADS
 		LOGRESULTS.append(TORRENTSDT[TOR]["TITLE"])
@@ -203,18 +203,18 @@ try:
 		print(u"")
 	
 	if LOGRESULTS:
-		print(u"     {BLD}{GRN} " + str(len(LOGRESULTS)) + " {RSC}TORRENTS{RST} match your TV series watchlist criteria\n").format(**AEC)
+		print((u"     {BLD}{GRN} " + str(len(LOGRESULTS)) + " {RSC}TORRENTS{RST} match your TV series watchlist criteria\n").format(**AEC))
 		i = 1
 		for RESULT in LOGRESULTS:
-			print(u"      {BLD}" + str(i).zfill(2) + "{RST}. " + RESULT).format(**AEC)[:89]
+			print((u"      {BLD}" + str(i).zfill(2) + "{RST}. " + RESULT).format(**AEC))[:89]
 			i += 1
 		print(u"")
 	else:
-		print(u"     {BLD}{YLW} {WARN} NO {RSC}TORRENTS{RST} match your TV series watchlist criteria").format(**AEC)
+		print((u"     {BLD}{YLW} {WARN} NO {RSC}TORRENTS{RST} match your TV series watchlist criteria").format(**AEC))
 
 
 except:
-	print(u"     {BLD}{RED} {ERROR} NO{RSC} TORRENTS{RST} can be matched. Should be a temporary error.").format(**AEC)
+	print((u"     {BLD}{YLW} {WARN} NO{RSC} TORRENTS{RST} can be matched.").format(**AEC))
 
 
 ###  TRANSMISSION REMOTE
@@ -233,10 +233,10 @@ if (ADDMAGNET == "ON"):
 						###  Clear the magnet links database
 						open(TORRENTDB, "w").close()
 		
-			print(u"     {BLD}{GRN} {PASS} {RSC}TORRENTS {GRN}ADDED{RST} remotely to Transmission Daemon").format(**AEC)	
+			print((u"     {BLD}{GRN} {PASS} {RSC}TORRENTS {GRN}ADDED{RST} remotely to Transmission Daemon").format(**AEC))	
 	
 	except:
-		print(u"     {BLD}{RED} {ERROR} CONNECTION{RSC} to Transmission Daemon {RED}FAILED{RST}. Check RPC configuration.").format(**AEC)
+		print((u"     {BLD}{RED} {ERROR} CONNECTION{RSC} to Transmission Daemon {RED}FAILED{RST}. Check RPC configuration.").format(**AEC))
 
 ### QUIT EVERYTHING, JUST IN CASE
 quit(u"\n")
