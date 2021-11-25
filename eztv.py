@@ -16,7 +16,7 @@ AEC = {
 
 ###  CREDITS  #####################################################################################
 PRONAME = os.path.basename(__file__)
-VERSION = "v2.4"
+VERSION = "v2.4.1"
 
 print((
  """{BLD}""" + PRONAME + """, """ + VERSION + """{RST} | EZTV Torrent Downloader
