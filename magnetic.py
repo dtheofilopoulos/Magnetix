@@ -19,7 +19,7 @@ PRONAME = os.path.basename(__file__)
 VERSION = "v3.0"
 
 print((
- """{BLD}""" + PRONAME + """, """ + VERSION + """{RST} | EZTV Torrent Downloader
+ """{BLD}""" + PRONAME + """, """ + VERSION + """{RST} | TV Torrent Downloader
 
 	Downloads matching TV Series titles from RARBG RSS and
 	automatically queues the torrents to a running transmission daemon
@@ -50,7 +50,7 @@ ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
 TRAN_HOST = "192.168.2.100"				# Transmission Daemon Host
 TRAN_PORT = "9091"					# Transmission Daemon Port
 USERNAME  = "transmission"				# Transmission Daemon Username
-PASSWORD  = "yourpassword"				# Transmission Daemon Password
+PASSWORD  = "p%jeltz%7_Hy9"				# Transmission Daemon Password
 
 ###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
@@ -106,7 +106,7 @@ if (LOG_WRITE == "ON"):
 		print((u"     {BLD}{RED} {ERROR} {RST}" + HASHESLOG + " was {BLD}{GRN}CREATED{RST}\n").format(**AEC))
 
 
-###  Check the EZTV RSS2.0 URI and parse the XML
+###  Check the RSS2.0 URI and parse the XML
 try:
 	REQ = Request(RSSXMLURI, headers={'User-Agent': 'Mozilla/5.0'})
 	XML = urlopen(REQ,timeout=10).read()
@@ -129,7 +129,7 @@ try:
 		
 		for SERIES in TVSERIESDB:
 			
-			###  make EZTV SERIES TITLES lowercase for easier regex
+			###  make SERIES TITLES lowercase for easier regex
 			if (SERIES.lower() in XMLTITLE.lower()):
 				
 				###  DO NOT download FILTERED names
