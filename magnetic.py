@@ -111,8 +111,8 @@ try:
 	REQ = Request(RSSXMLURI, headers={'User-Agent': 'Mozilla/5.0'})
 	XML = urlopen(REQ,timeout=10).read()
 	
-	###  Parse the XML for a limit of 50 entries
-	XML_PARSED = feedparser.parse(XML).entries[:50]
+	###  Parse the XML for a limit of 100 entries
+	XML_PARSED = feedparser.parse(XML).entries[:100]
 	
 except:
 	print((u"     {BLD}{RED} {ERROR} {RSC}HTTP STATUS {RED}504{RSC}: GATEWAY TIMEOUT{RST} for URI " + RSSXMLURI).format(**AEC))
