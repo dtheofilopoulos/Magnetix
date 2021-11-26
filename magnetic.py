@@ -16,12 +16,12 @@ AEC = {
 
 ###  CREDITS  #####################################################################################
 PRONAME = os.path.basename(__file__)
-VERSION = "v2.4"
+VERSION = "v3.0"
 
 print((
  """{BLD}""" + PRONAME + """, """ + VERSION + """{RST} | EZTV Torrent Downloader
 
-	Downloads matching TV Series titles as soon as they air on eztv and
+	Downloads matching TV Series titles from RARBG RSS and
 	automatically queues the torrents to a running transmission daemon
 
 	License  | Dio ( classicrocker384@gmail.com ), {UND}3-Clause BSD License{RST}
@@ -32,25 +32,25 @@ print((
  """).format(**AEC))
 
 ###  CONFIGURATION  ###############################################################################
-DIRECTORY = os.path.dirname(__file__) + "/pyEZTV/"	# Absolute PATH of working directory
+DIRECTORY = os.path.dirname(__file__) + "/magnetic/"	# Absolute PATH of working directory
 WATCHLIST = DIRECTORY + "series.db"			# TV SERIES watchlist
 HASHESLOG = DIRECTORY + "torrent.log"			# History log of matched torrents w/ hashes
 TORRENTDB = DIRECTORY + "torrent.db"			# Matched torrents database w/ magnet links
 
 ###  SETTINGS  ####################################################################################
-RSSXMLURI = "https://eztv.re/ezrss.xml"			# RSS2.0 XML URI
+RSSXMLURI = "https://rarbg2021.org/rssdd.php?categories=18"	# RSS2.0 XML URI
 TOR_WRITE = "ON"					# Keep magnet URIs in Torrent DB   [ON|OFF]
 LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
 DAYS2KEEP = "1"						# Clean history log after x days
 FILTER_TR = "ON"					# Activate filter (need BLACKLIST) [ON|OFF]
-BLACKLIST = ["x265",".avi$",]				# Do NOT download FILENAMES w/ these tags
+BLACKLIST = ["x265",".avi$","x264-mSD",]		# Do NOT download FILENAMES w/ these tags
 
 ###  TRANSMISSION DAEMON  #########################################################################
 ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
 TRAN_HOST = "192.168.2.100"				# Transmission Daemon Host
 TRAN_PORT = "9091"					# Transmission Daemon Port
 USERNAME  = "transmission"				# Transmission Daemon Username
-PASSWORD  = "yourpasswordgoeshere"			# Transmission Daemon Password
+PASSWORD  = "yourpassword"				# Transmission Daemon Password
 
 ###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
@@ -122,10 +122,10 @@ try:
 	for XMLENTRY in XML_PARSED:
 		
 		###  FETCH RSS VARIABLES
-		XMLTITLE = XMLENTRY.title
-		XML_FILE = XMLENTRY.torrent_filename
-		XML_HASH = XMLENTRY.torrent_infohash
-		XML_MAGN = XMLENTRY.torrent_magneturi
+		XMLTITLE = XMLENTRY.title.replace("."," ")
+		XML_FILE = XMLENTRY.description
+		XML_HASH = XMLENTRY.guid
+		XML_MAGN = XMLENTRY.link
 		
 		for SERIES in TVSERIESDB:
 			
