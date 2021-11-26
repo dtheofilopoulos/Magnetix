@@ -3,7 +3,6 @@
 
 import os.path, subprocess, time, feedparser
 from urllib.request import Request, urlopen
-import datetime
 
 os.system("clear")
 
