@@ -5,7 +5,7 @@ I tried to write this python script with the most minimal approach to dependenci
 You should be able to collect matching magnet links in torrent.db
 
 # Transmission Daemon
-When torrent magnet links are present in torrent.db, magnet links will be passed on to a running transmission daemon. 
+When torrent magnet links are present in torrent.db, magnet links will be passed on to a running transmission daemon (https://transmissionbt.com/about/). 
 
 Transmission remote is required for this to work. If successful, torrent.db will be truncated.
 I am aware that there may still be some bugs, which I am going to do my best to fix, however, this little script has been serving me well for about 3 years now.
