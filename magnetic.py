@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os.path, subprocess, time, feedparser, argparse
+import base64, os.path, subprocess, time, feedparser, argparse
 from urllib.request import Request, urlopen
-
-parser = argparse.ArgumentParser()
 
 os.system("clear")
 
@@ -28,7 +26,8 @@ print((
 
 	License  | Dio ( classicrocker384@gmail.com ), {UND}3-Clause BSD License{RST}
 	Revision | """ + time.ctime(os.path.getmtime(__file__)) + """
-	Depends  | python, transmission-remote
+	Depends  | python (base64, os.path, subprocess, time, feedparser, 
+                   argparse, urllib.request), transmission-remote
 	
  ------------------------------------------------------------------------------
  """).format(**AEC))
@@ -52,7 +51,7 @@ ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
 TRAN_HOST = "192.168.2.100"				# Transmission Daemon Host
 TRAN_PORT = "9091"					# Transmission Daemon Port
 USERNAME  = "transmission"				# Transmission Daemon Username
-PASSWORD  = "yourpassword"				# Transmission Daemon Password
+PASSWORD  = "yourencodedpassword=="			# Transmission Daemon Password (base64 encoded)
 
 ###  DEFINE VARIABLES  ############################################################################
 TVSERIESDB = []
@@ -102,14 +101,15 @@ print((u"\n :::  {BLD}TV SERIES MATCHES{RST}  ::::::::::::::::::::::::::::::::::
 ###  if HASHESLOG has not been modified for more than x days, start CLEAN
 if (LOG_WRITE == "ON" and os.path.getsize(HASHESLOG) != "0"):
 	
+	### parse --clear-log 1 from the command line for debugging purposes
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--clear-log', default=1)
+	args = parser.parse_args()
+
 	try:
 		CUR_TIME = time.time()
 		MOD_TIME = os.path.getmtime(HASHESLOG)
 		
-		### parse --clear-log 1 from the command line for debugging purposes
-		parser.add_argument('-CL', '--clear-log', default=1)
-		args = parser.parse_args()
-
 		if (CUR_TIME - MOD_TIME >= int(DAYS2KEEP) * 24 * 3600 or args.clear_log == "1"):
 			open(HASHESLOG, "w").close()
 			print((u"     {BLD}{YLW} {WARN} {RST}" + HASHESLOG + " was {BLD}{YLW}TRUNCATED{RST}\n").format(**AEC))
@@ -220,7 +220,6 @@ try:
 		for RESULT in LOGRESULTS:
 			print((u"     {BLD}{GRN} {PASS} ADD {RSC}(" + str(RSLTS).zfill(2) + "){RST} | " + RESULT[:58]).format(**AEC))
 			RSLTS += 1
-		print(u"")
 	else:
 		print((u"     {BLD}{YLW} {WARN} NO {RSC}TORRENTS{RST} match your TV series watchlist.").format(**AEC))
 
@@ -231,7 +230,7 @@ except:
 
 ###  TRANSMISSION REMOTE
 if (ADDMAGNET == "ON"):
-	
+	print(u"")
 	try:
 		subprocess.check_call("nc -w 3 -vz " + TRAN_HOST + " " + TRAN_PORT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
 		if (os.path.getsize(TORRENTDB) > 0):
@@ -239,20 +238,19 @@ if (ADDMAGNET == "ON"):
 				for TORR in MAGNETDB:
 					TORR = TORR.strip()
 					if len(TORR):
-						TRANSMISSION = "transmission-remote " + TRAN_HOST + ":" + TRAN_PORT + " --auth " + USERNAME + ":" + PASSWORD + " --add " + TORR
+						TRANSMISSION = "transmission-remote " + TRAN_HOST + ":" + TRAN_PORT + " --auth " + USERNAME + ":" + str(base64.urlsafe_b64decode(PASSWORD), "ascii") + " --add " + TORR
 						subprocess.call(TRANSMISSION,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
 						
 						###  Clear the magnet links database
 						open(TORRENTDB, "w").close()
-			print(u"      -------------------------------------------------------------------------")
-			print((u"     {BLD} TORRENTS {GRN}ADDED{RST} remotely to Transmission RPC").format(**AEC))
-			print(u"      -------------------------------------------------------------------------")	
+
+			print((u"     {BLD} TORRENTS {GRN}ADDED{RST} remotely to Transmission RPC\n").format(**AEC))
 	
 	except:
 		print((u"     {BLD}{RED} {ERROR} CONNECTION{RSC} to Transmission RPC {RED}FAILED{RST}. Check configuration.").format(**AEC))
 
 ### QUIT EVERYTHING, JUST IN CASE
-quit(u"\n")
+quit()
 
 #
 # EOF
