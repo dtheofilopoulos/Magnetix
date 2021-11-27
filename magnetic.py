@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os.path, subprocess, time, feedparser
+import os.path, subprocess, time, feedparser, argparse
 from urllib.request import Request, urlopen
+
+parser = argparse.ArgumentParser()
 
 os.system("clear")
 
@@ -89,22 +91,28 @@ except IOError:
 	quit(u"\n")
 print(u"")
 
-###  BLACKLIST
+###  PRINT BLACKLIST
 if len(BLACKLIST):
 	print((u"\n :::  {BLD}TV SERIES BLACKLIST{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::\n").format(**AEC))
 	print(u"      " + str(BLACKLIST)[1:-1].replace("'", "") + "\n")
 
-###  MATCHES
+###  PRINT MATCHES
 print((u"\n :::  {BLD}TV SERIES MATCHES{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::::\n").format(**AEC))
+
 ###  if HASHESLOG has not been modified for more than x days, start CLEAN
-if (LOG_WRITE == "ON"):
+if (LOG_WRITE == "ON" and os.path.getsize(HASHESLOG) != "0"):
+	
 	try:
 		CUR_TIME = time.time()
 		MOD_TIME = os.path.getmtime(HASHESLOG)
 		
-		if (CUR_TIME - MOD_TIME >= int(DAYS2KEEP) * 24 * 3600):
+		### parse --clear-log 1 from the command line for debugging purposes
+		parser.add_argument('-CL', '--clear-log', default=1)
+		args = parser.parse_args()
+
+		if (CUR_TIME - MOD_TIME >= int(DAYS2KEEP) * 24 * 3600 or args.clear_log == "1"):
 			open(HASHESLOG, "w").close()
-			print((u"     {BLD}{YLW} {WARN} {RST}" + HASHESLOG + " was {BLD}{YLW}TRUNCATED{RST}").format(**AEC))
+			print((u"     {BLD}{YLW} {WARN} {RST}" + HASHESLOG + " was {BLD}{YLW}TRUNCATED{RST}\n").format(**AEC))
 		
 	except:
 		print((u"     {BLD}{RED} {ERROR} {RST}" + HASHESLOG + " was {BLD}{RED}NOT ACCESSIBLE{RST}").format(**AEC))
