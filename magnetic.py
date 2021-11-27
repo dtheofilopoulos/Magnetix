@@ -43,7 +43,7 @@ TOR_WRITE = "ON"					# Keep magnet URIs in Torrent DB   [ON|OFF]
 LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
 DAYS2KEEP = "1"						# Clean history log after x days
 FILTER_TR = "ON"					# Activate filter (need BLACKLIST) [ON|OFF]
-BLACKLIST = "x265",".avi$","x264-mSD","720p","1080p"	# Do NOT download FILENAMES w/ these tags
+BLACKLIST = "x264-mSD","x265","720p","1080p"		# Do NOT download FILENAMES w/ these tags
 
 ###  TRANSMISSION DAEMON  #########################################################################
 ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
@@ -75,11 +75,11 @@ try:
 		if len(TVSERIESDB):
 			i = 1
 			for TVSERIESTITLES in TVSERIESDB:
-				print(u"      " + str(i).zfill(2) + ". " + TVSERIESTITLES)
+				print(u"      " + str(i).zfill(2) + ". " + TVSERIESTITLES[:69])
 				i += 1
 		else:
 			print((u"     {BLD}{YLW} {WARN} {RST}" + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC))
-			print((u"     {BLD}{YLW} {WARN} ADD{RST} TV series titles, separated by a new line (e.g. Family Guy)").format(**AEC))
+			print((u"     {BLD}{YLW} {WARN} ADD{RST} TV series titles, separated by a new line (e.g. Stranger Things)").format(**AEC))
 			quit(u"")
 		
 except IOError:
@@ -113,14 +113,15 @@ if (LOG_WRITE == "ON"):
 
 ###  Check the RSS2.0 URI and parse the XML
 try:
-	REQ = Request(RSSXMLURI, headers={'User-Agent': 'Gecko/4.0'})
-	XML = urlopen(REQ,timeout=10).read()
+	### Open the RSS and store in variable
+	XML = urlopen(Request(RSSXMLURI, headers={'User-Agent': 'Gecko/4.0'}),timeout=10).read()
 	
-	###  Parse the XML
+	###  Parse the XML with Feedparser
 	XML_PARSED = feedparser.parse(XML).entries
 	
 except:
-	print((u"     {BLD}{RED} {ERROR} {RSC}HTTP STATUS {RED}504{RSC}: GATEWAY TIMEOUT{RST} for URI " + RSSXMLURI).format(**AEC))
+	print((u"     {BLD}{RED} {ERROR} {RSC}HTTP {RED}TIMEOUT{RST} for URI " + RSSXMLURI + "\n").format(**AEC))
+	quit()
 
 try:
 	for XMLENTRY in XML_PARSED:
@@ -141,12 +142,12 @@ try:
 					
 					if (any(FILTER in XML_FILE.lower() for FILTER in BLACKLIST)):
 						FILTER_SPC = "1"
-						print((u"     {BLD}{CYN} {WARN} FILTERED{RST} | " + XML_FILE).format(**AEC))
+						print((u"     {BLD}{CYN} {WARN} FILTERED{RST} | " + XML_FILE[:58]).format(**AEC))
 						continue
 				
 				###  in the off-chance that NO MAGNET URI in the XML, filter out the problematic torrent
 				if (XML_MAGN == ""):
-					print((u"     {BLD}{RED} {ERROR} NOMAGNET{RST} | " + XML_FILE).format(**AEC))
+					print((u"     {BLD}{RED} {ERROR} NOMAGNET{RST} | " + XML_FILE[:58]).format(**AEC))
 					continue
 				
 				###  Load historical hashes
@@ -159,7 +160,7 @@ try:
 				###  Check the HISTORY LOG for already downloaded torrents
 				if (XML_HASH in HISTORYLOG):
 					FILTER_SPC = "1"
-					print((u"     {BLD}{YLW} {WARN} EXISTING{RST} | " + XML_FILE).format(**AEC))
+					print((u"     {BLD}{YLW} {WARN} EXISTING{RST} | " + XML_FILE[:58]).format(**AEC))
 					continue
 				else:
 					HISTORYLOG.append(XML_HASH)
@@ -207,19 +208,18 @@ try:
 		print(u"")
 	
 	if LOGRESULTS:
-		print((u"     {BLD}{GRN} " + str(len(LOGRESULTS)) + " {RSC}TORRENTS{RST} match your TV series watchlist criteria\n").format(**AEC))
-		i = 1
+		RSLTS = 1
 		for RESULT in LOGRESULTS:
-			print((u"      {BLD}" + str(i).zfill(2) + "{RST}. " + RESULT).format(**AEC))
-			i += 1
+			print((u"     {BLD}{GRN} {PASS} ADD {RSC}(" + str(RSLTS).zfill(2) + "){RST} | " + RESULT[:58]).format(**AEC))
+			RSLTS += 1
 		print(u"")
 	else:
-		print((u"     {BLD}{YLW} {WARN} NO {RSC}TORRENTS{RST} match your TV series watchlist criteria").format(**AEC))
+		print((u"     {BLD}{YLW} {WARN} NO {RSC}TORRENTS{RST} match your TV series watchlist.").format(**AEC))
 
 
 except:
-	print((u"     {BLD}{YLW} {WARN} NO{RSC} TORRENTS{RST} can be matched.").format(**AEC))
-
+	print((u"     {BLD}{RED} {ERROR}{RSC} Something went {RED}WRONG{RSC}. Maybe check RSS field names.{RST}\n").format(**AEC))
+	quit()
 
 ###  TRANSMISSION REMOTE
 if (ADDMAGNET == "ON"):
@@ -236,11 +236,12 @@ if (ADDMAGNET == "ON"):
 						
 						###  Clear the magnet links database
 						open(TORRENTDB, "w").close()
-		
-			print((u"     {BLD}{GRN} {PASS} {RSC}TORRENTS {GRN}ADDED{RST} remotely to Transmission Daemon").format(**AEC))	
+			print(u"      -------------------------------------------------------------------------")
+			print((u"     {BLD} TORRENTS {GRN}ADDED{RST} remotely to Transmission RPC").format(**AEC))
+			print(u"      -------------------------------------------------------------------------")	
 	
 	except:
-		print((u"     {BLD}{RED} {ERROR} CONNECTION{RSC} to Transmission Daemon {RED}FAILED{RST}. Check RPC configuration.").format(**AEC))
+		print((u"     {BLD}{RED} {ERROR} CONNECTION{RSC} to Transmission RPC {RED}FAILED{RST}. Check configuration.").format(**AEC))
 
 ### QUIT EVERYTHING, JUST IN CASE
 quit(u"\n")
