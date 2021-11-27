@@ -6,7 +6,7 @@ Add TV series titles in series.db separated by a new line everytime.
 ie. Lucifer
     Stranger Things
     The Walking Dead
-    ... and so on
+... and so on
     
     
 I tried to write this python script with the most minimal approach to dependencies. There is no need to pip install. Just download, change permissions to u+w and run.
