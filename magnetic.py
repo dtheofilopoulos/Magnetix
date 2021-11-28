@@ -74,15 +74,18 @@ try:
 		TVSERIESDB = list(sorted(TVSERIES.read().strip().splitlines()))
 		
 		if (os.path.getsize(WATCHLIST) > 0):
-			i = 1
-			for TVSERIESTITLES in TVSERIESDB:
-				print(u"      " + str(i).zfill(2) + ". " + TVSERIESTITLES[:69])
-				i += 1
+			def TVSERIESTITLES(l, n):
+				for i in range(0, len(l), n):
+					yield l[i:i+n]
+			TVSERIESTITLES(TVSERIESDB,5)
+				
+			for TVSERIESTITLE in TVSERIESTITLES(TVSERIESDB,5):
+				print(u"      " + ", ".join(TVSERIESTITLE) + ",")
 		else:
 			print((u"      {BLD}{YLW}{WARN}{RST} " + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC))
 			print((u"      {BLD}{YLW}{WARN} ADD{RST} TV series titles, separated by a new line (e.g. Stranger Things)").format(**AEC))
-			quit(u"")
-		
+			quit()
+	print()
 except IOError:
 	open(WATCHLIST, "w").close()
 	print((u"      {BLD}{RED}{ERROR}{RST} " + WATCHLIST + " was {BLD}{GRN}CREATED{RST}").format(**AEC))
@@ -92,16 +95,19 @@ except IOError:
 if (BL_FILTER == "ON"):
 	try:
 		if (os.path.getsize(BLACKLIST) > 0):
-			print((u"\n\n :::  {BLD}TV SERIES BLACKLIST{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::\n").format(**AEC))
+			print((u"\n :::  {BLD}BLACKLIST{RST}  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n").format(**AEC))
 			
 			with open(BLACKLIST, "r") as BLIST:
-				BLACKLISTDB = list(sorted(BLIST.read().lower().strip().splitlines()))	
+				BLACKLISTDB = list(sorted(BLIST.read().lower().strip().splitlines()))
+				###  break the list every 5 keywords
+				def BLACKLISTED(l, n):
+					for i in range(0, len(l), n):
+						yield l[i:i+n]
+				BLACKLISTED(BLACKLISTDB,5)
 				
-				i = 1
-				for BLACKLISTS in BLACKLISTDB:
-					print(u"      " + str(i).zfill(2) + ". " + BLACKLISTS[:69])
-					i += 1
-				print()
+				for KEYWORD in BLACKLISTED(BLACKLISTDB,5):
+					print(u"      " + ", ".join(KEYWORD) + ",")
+			print()
 	except IOError:
 		open(BLACKLIST, "w").close()
 		print((u"      {BLD}{RED}{ERROR}{RST} " + BLACKLIST + " was {BLD}{GRN}CREATED{RST}").format(**AEC))
