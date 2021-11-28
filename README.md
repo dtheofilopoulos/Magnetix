@@ -1,5 +1,5 @@
 # magnetic
-Downloads matching TV Series titles from https://showrss.info/ and automatically queues the torrents to transmission RPC (https://transmissionbt.com/about/).
+Magnetic is a non-ads crawler matching a list of your predefined TV Series titles. It will fetch their magnet urls from https://showrss.info/ and automatically queue them to transmission RPC (https://transmissionbt.com/about/).
 
 I tried to write this python script with the most minimal approach to dependencies. There is no need to pip install. Just download, change permissions to u+w, add TV series titles in series.db, separated by a new line everytime. Change settings accordingly to match your setup and run the python script.
 You should be able to collect matching magnet links in torrent.db. In order to avoid duplicates, hashes are kept for 1 day (you can change that to whatever suits your needs best).
