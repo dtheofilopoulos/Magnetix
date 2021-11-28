@@ -30,7 +30,7 @@ PASSWORD  = "yourpassword"				# Transmission Daemon Password (base64 encoded)
 
 
 # Transmission Daemon
-Optionally, you can use this script to connect to a running transmission RPC. Transmission remote (https://linux.die.net/man/1/transmission-remote) is required for this to work).
+Optionally, you can use this script to connect to a running transmission RPC. Transmission remote (https://linux.die.net/man/1/transmission-remote) is required for this to work.
 If you do not have one installed, remember to switch the ADDMAGNET option to OFF. Either way, torrent magnet links will be populated in torrents.db for your personal use.
 When torrent magnet links are present in torrent.db, magnet links can be passed on to transmission (ADDMAGNET needs to be set to ON for this to function).
 If successful, torrent.db will be automatically truncated.
