@@ -1,8 +1,8 @@
 # magnetic
-Downloads matching TV Series titles from https://showrss.info/ and automatically queues the torrents to transmission (https://transmissionbt.com/about/).
+Downloads matching TV Series titles from https://showrss.info/ and automatically queues the torrents to transmission RPC (https://transmissionbt.com/about/).
 
 I tried to write this python script with the most minimal approach to dependencies. There is no need to pip install. Just download, change permissions to u+w, add TV series titles in series.db, separated by a new line everytime. Change settings accordingly to match your setup and run the python script.
-You should be able to collect matching magnet links in torrent.db. In order to avoid duplicates, hashes are kept for 1 day (you can change that to whatever suits you better).
+You should be able to collect matching magnet links in torrent.db. In order to avoid duplicates, hashes are kept for 1 day (you can change that to whatever suits your needs best).
 
 # Settings
 
@@ -12,9 +12,7 @@ LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
 
 DAYS2KEEP = "1"						# Clean history log after x days
 
-FILTER_TR = "ON"					# Activate filter (need BLACKLIST) [ON|OFF]
-
-BLACKLIST = "x265",".avi$","x264-mSD","720p","1080p"	# Do NOT download FILENAMES w/ these tags
+BL_FILTER = "ON"					# Activate filter                  [ON|OFF]
 
 ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
 
