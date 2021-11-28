@@ -37,7 +37,7 @@ DIRECTORY = os.path.dirname(__file__) + "/magnetic/"	# Absolute PATH of working 
 WATCHLIST = DIRECTORY + "series.db"			# TV SERIES watchlist
 HASHESLOG = DIRECTORY + "torrent.log"			# History log of matched torrents w/ hashes
 TORRENTDB = DIRECTORY + "torrent.db"			# Matched torrents database w/ magnet links
-BLACKLIST = DIRECTORY + "blacklist.db"			# Keywords you want to avoid in torrents
+BLACKLIST = DIRECTORY + "blacklist.db"			# Do NOT download TORRENTS w/ these keywords
 
 ###  SETTINGS  ####################################################################################
 RSSXMLURI = "https://showrss.info/other/all.rss"	# RSS2.0 XML URI
