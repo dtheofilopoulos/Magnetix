@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os.path, base64, time, feedparser, argparse
+import os.path, base64, time, feedparser, argparse, subprocess
 from urllib.request import Request, urlopen
-from subprocess import call,PIPE
 
 os.system("clear")
 
@@ -34,7 +33,7 @@ print((
  """).format(**AEC))
 
 ###  CONFIGURATION  ###############################################################################
-DIRECTORY = os.path.dirname(__file__) + "/magnetic/"	# Absolute PATH of working directory
+DIRECTORY = os.path.dirname(__file__) + "/xmagnetic/"	# Absolute PATH of working directory
 WATCHLIST = DIRECTORY + "series.db"			# TV SERIES watchlist
 HASHESLOG = DIRECTORY + "torrent.log"			# History log of matched torrents w/ hashes
 TORRENTDB = DIRECTORY + "torrent.db"			# Matched torrents database w/ magnet links
