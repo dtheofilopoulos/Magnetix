@@ -19,15 +19,15 @@ PRONAME = os.path.basename(__file__)
 VERSION = "v3.1"
 
 print((
- """{BLD}""" + PRONAME + """, """ + VERSION + """{RST} | TV Torrent Downloader
+ """{BLD}""" + PRONAME + """, """ + VERSION + """{RST} | RSS Magnet Links Downloader
 
-	Downloads matching TV Series titles from showrss.info and
-	automatically queues the torrents to a running transmission daemon
+	Downloads matching titles from an RSS and automatically queues 
+	the torrents to a running transmission RPC.
 
 	License  | Dio ( classicrocker384@gmail.com ), {UND}3-Clause BSD License{RST}
 	Revision | """ + time.ctime(os.path.getmtime(__file__)) + """
-	Depends  | python (base64, os.path, subprocess, time, feedparser, 
-                   argparse, urllib.request), transmission-remote
+	Depends  | python (os.path, base64, time, feedparser, argparse, 
+		   subprocess, urllib.request), transmission-remote
 	
  ------------------------------------------------------------------------------
  """).format(**AEC))
@@ -84,7 +84,7 @@ try:
 		else:
 			print((u"      {BLD}{YLW}{WARN}{RST} " + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC))
 			print((u"      {BLD}{YLW}{WARN} ADD{RST} TV series titles, separated by a new line (e.g. Stranger Things)").format(**AEC))
-			quit()
+			exit(0)
 	print()
 except IOError:
 	open(WATCHLIST, "w").close()
@@ -146,7 +146,7 @@ try:
 	
 except:
 	print((u"      {BLD}{RED}{ERROR}{RSC} HTTP {RED}TIMEOUT{RST} for URI " + RSSXMLURI + "\n").format(**AEC))
-	quit()
+	exit(0)
 
 try:
 	for XMLENTRY in XML_PARSED:
@@ -237,31 +237,30 @@ try:
 
 except:
 	print((u"      {BLD}{RED}{ERROR}{RSC} Something went {RED}WRONG{RSC}. Maybe check RSS field names.{RST}\n").format(**AEC))
-	quit()
+	exit(0)
 
 ###  TRANSMISSION REMOTE
 if (ADDMAGNET == "ON"):
-	print()
 	try:
 		with open(TORRENTDB, "r") as MAGNETDB:
 			
 			for TORR in MAGNETDB:
 				TORR = TORR.strip()
 				if len(TORR):
-					
-					TRANSMISSION = "transmission-remote " + TRAN_HOST + ":" + TRAN_PORT + " --auth " + USERNAME + ":" + str(base64.urlsafe_b64decode(PASSWORD), "ascii") + " --add " + TORR
-					subprocess.call(TRANSMISSION,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
-					
-					###  Clear the magnet links database
-					open(TORRENTDB, "w").close()
+					try:
+						TRANSMISSION = "transmission-remote " + TRAN_HOST + ":" + TRAN_PORT + " --auth " + USERNAME + ":" + str(base64.urlsafe_b64decode(PASSWORD), "ascii") + " --add " + TORR
+						subprocess.Popen(TRANSMISSION,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+						
+						###  Clear the magnet links database
+						open(TORRENTDB, "w").close()
+					except:
+						print((u"\n      {BLD}{RED}{ERROR}{RSC} Remote connection to Transmission RPC {RED}FAILED{RST}.\n          Check configuration.\n          Magnet links should still be safely stored.").format(**AEC))
 	except IOError:
 		open(TORRENTDB, "w").close()
-		print((u"      {BLD}{RED}{ERROR}{RST} " + TORRENTDB + " was {BLD}{GRN}CREATED{RST}\n").format(**AEC))
-	except:
-		print((u"      {BLD}{RED}{ERROR}{RSC} Remote connection to Transmission RPC {RED}FAILED{RST}.\n          Check configuration.\n          Magnet links should still be safely stored.\n").format(**AEC))
-
-### QUIT EVERYTHING, JUST IN CASE
-quit()
+		print((u"\n      {BLD}{RED}{ERROR}{RST} " + TORRENTDB + " was {BLD}{GRN}CREATED{RST}").format(**AEC))
+	
+print()
+exit(0)
 
 #
 # EOF
