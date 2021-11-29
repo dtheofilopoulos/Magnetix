@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os.path, base64, time, feedparser, argparse, subprocess
+import os.path, base64, time, feedparser, argparse
 from urllib.request import Request, urlopen
+from subprocess import call,PIPE
 
 os.system("clear")
 
@@ -80,7 +81,7 @@ try:
 			TVSERIESTITLES(TVSERIESDB,5)
 				
 			for TVSERIESTITLE in TVSERIESTITLES(TVSERIESDB,5):
-				print(u"      " + ", ".join(TVSERIESTITLE) + ",")
+				print(u"      " + ", ".join(TVSERIESTITLE))
 		else:
 			print((u"      {BLD}{YLW}{WARN}{RST} " + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC))
 			print((u"      {BLD}{YLW}{WARN} ADD{RST} TV series titles, separated by a new line (e.g. Stranger Things)").format(**AEC))
@@ -106,7 +107,7 @@ if (BL_FILTER == "ON"):
 				BLACKLISTED(BLACKLISTDB,5)
 				
 				for KEYWORD in BLACKLISTED(BLACKLISTDB,5):
-					print(u"      " + ", ".join(KEYWORD) + ",")
+					print(u"      " + ", ".join(KEYWORD))
 			print()
 	except IOError:
 		open(BLACKLIST, "w").close()
@@ -139,7 +140,7 @@ if (LOG_WRITE == "ON"):
 ###  Check the RSS2.0 URI and parse the XML
 try:
 	### Open the RSS and store in variable
-	XML = urlopen(Request(RSSXMLURI, headers={'User-Agent': 'Gecko/4.0'}),timeout=10).read()
+	XML = urlopen(Request(RSSXMLURI, headers={'User-Agent': 'Gecko/4.0'}),timeout=15).read()
 	
 	###  Parse the XML with Feedparser
 	XML_PARSED = feedparser.parse(XML).entries
