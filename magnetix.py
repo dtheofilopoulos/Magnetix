@@ -19,7 +19,7 @@ PRONAME = os.path.basename(__file__)
 VERSION = "v3.1"
 
 print((
- """{BLD}""" + PRONAME + """, """ + VERSION + """{RST} | RSS Magnet Links Downloader
+ """\n{BLD}""" + PRONAME + """, """ + VERSION + """{RST} | RSS Magnet Links Downloader
 
 	Downloads matching titles from an RSS and automatically queues 
 	the torrents to a running transmission RPC.
@@ -33,7 +33,7 @@ print((
  """).format(**AEC))
 
 ###  CONFIGURATION  ###############################################################################
-DIRECTORY = os.path.dirname(__file__) + "/xmagnetic/"	# Absolute PATH of working directory
+DIRECTORY = os.path.dirname(__file__) + "/_magnetic/"	# Absolute PATH of working directory
 WATCHLIST = DIRECTORY + "series.db"			# TV SERIES watchlist
 HASHESLOG = DIRECTORY + "torrent.log"			# History log of matched torrents w/ hashes
 TORRENTDB = DIRECTORY + "torrent.db"			# Matched torrents database w/ magnet links
@@ -43,7 +43,7 @@ BLACKLIST = DIRECTORY + "blacklist.db"			# Do NOT download TORRENTS w/ these key
 RSSXMLURI = "https://showrss.info/other/all.rss"	# RSS2.0 XML URI
 TOR_WRITE = "ON"					# Keep magnet URIs in Torrent DB   [ON|OFF]
 LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
-DAYS2KEEP = "1"						# Clean history log after x days
+DAYS2KEEP = "3"						# Clean history log after x days
 BL_FILTER = "ON"					# Activate blacklist filter        [ON|OFF]
 
 ###  TRANSMISSION DAEMON  #########################################################################
@@ -71,15 +71,16 @@ print((u" :::  {BLD}TV SERIES WATCHLIST{RST}  ::::::::::::::::::::::::::::::::::
 try:
 	with open(WATCHLIST, "r") as TVSERIES:
 		###  Alphabetical listing of watchlist
-		TVSERIESDB = list(sorted(TVSERIES.read().strip().splitlines()))
+		if TVSERIES != "\n":
+			TVSERIESDB = list(sorted(TVSERIES.read().strip().splitlines()))
 		
 		if (os.path.getsize(WATCHLIST) > 0):
 			def TVSERIESTITLES(l, n):
 				for i in range(0, len(l), n):
 					yield l[i:i+n]
-			TVSERIESTITLES(TVSERIESDB,5)
+			TVSERIESTITLES(TVSERIESDB,4)
 				
-			for TVSERIESTITLE in TVSERIESTITLES(TVSERIESDB,5):
+			for TVSERIESTITLE in TVSERIESTITLES(TVSERIESDB,4):
 				print(u"      " + ", ".join(TVSERIESTITLE))
 		else:
 			print((u"      {BLD}{YLW}{WARN}{RST} " + WATCHLIST + " is {BLD}{YLW}EMPTY{RST}").format(**AEC))
@@ -99,13 +100,13 @@ if (BL_FILTER == "ON"):
 			
 			with open(BLACKLIST, "r") as BLIST:
 				BLACKLISTDB = list(sorted(BLIST.read().lower().strip().splitlines()))
-				###  break the list every 5 keywords
+				###  break the list every 4 keywords
 				def BLACKLISTED(l, n):
 					for i in range(0, len(l), n):
 						yield l[i:i+n]
-				BLACKLISTED(BLACKLISTDB,5)
+				BLACKLISTED(BLACKLISTDB,4)
 				
-				for KEYWORD in BLACKLISTED(BLACKLISTDB,5):
+				for KEYWORD in BLACKLISTED(BLACKLISTDB,4):
 					print(u"      " + ", ".join(KEYWORD))
 			print()
 	except IOError:
@@ -153,7 +154,7 @@ try:
 		
 		###  FETCH RSS VARIABLES
 		XMLTITLE = XMLENTRY.title
-		XML_FILE = XMLENTRY.tv_raw_title
+		XML_RAWT = XMLENTRY.tv_raw_title
 		XML_HASH = XMLENTRY.tv_info_hash
 		XML_MAGN = XMLENTRY.link
 		
@@ -165,14 +166,10 @@ try:
 				###  DO NOT download FILTERED names
 				if (BL_FILTER == "ON"):
 					
-					if (any(FILTER in XML_FILE.lower() for FILTER in BLACKLISTDB)):
-						print((u"      {BLD}{CYN}{WARN} FILTERED{RST} | " + XML_FILE[:58]).format(**AEC))
+					if (any(FILTER in XML_RAWT.lower() for FILTER in BLACKLISTDB)):
+						FILTER_SPC = "1"
+						print((u"      {BLD}{CYN}{WARN} FILTERED{RST} | " + XML_RAWT[:58]).format(**AEC))						
 						continue
-				
-				###  in the off-chance that NO MAGNET URI in the XML, filter out the problematic torrent
-				if (XML_MAGN == ""):
-					print((u"      {BLD}{RED}{ERROR} NOMAGNET{RST} | " + XML_FILE[:58]).format(**AEC))
-					continue
 				
 				###  Load historical hashes
 				with open(HASHESLOG, "r") as HISTORY:
@@ -183,21 +180,20 @@ try:
 				
 				###  Check the HISTORY LOG for already downloaded torrents
 				if (XML_HASH in HISTORYLOG):
-					print((u"      {BLD}{YLW}{WARN} EXISTING{RST} | " + XML_FILE[:58]).format(**AEC))
+					FILTER_SPC = "1"
+					print((u"      {BLD}{YLW}{WARN} EXISTING{RST} | " + XML_RAWT[:58]).format(**AEC))
 					continue
 				else:
 					HISTORYLOG.append(XML_HASH)
 				
 				###  Check for existing MAGNET LINKS
-				if (XML_MAGN in TORRENT_DB):
-					continue
-				else:
+				if not (XML_MAGN in TORRENT_DB):
 					TORRENT_DB.append(XML_MAGN)
 				
 				###  Build the array with UNIQUE torrent matches based on infohash
 				TORRENTSDT[XML_HASH] = { "TITLE": XMLTITLE, }
-	print()
-	
+				
+				
 	###  WRITE LOGS FOR MATCHED TORRENTS
 	LOGRESULTS = []
 	for TOR in TORRENTSDT:
@@ -232,7 +228,9 @@ try:
 		for RESULT in LOGRESULTS:
 			print((u"      {BLD}{GRN}{PASS} ADD {RSC}(" + str(i).zfill(2) + "){RST} | " + RESULT[:58]).format(**AEC))
 			i += 1
-	else:
+	
+	##  IF NO TITLES EXIST, PRINT THIS MESSAGE
+	if (str(FILTER_SPC) != "1"):
 		print((u"      {BLD}{YLW}{WARN} NO MATCH{RST} | No more torrents match your TV series watchlist.").format(**AEC))
 
 except:
