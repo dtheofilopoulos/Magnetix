@@ -9,24 +9,17 @@ In order to avoid duplicates, hashes are kept for 1 day (you can change that to 
 Additionally, you can specify keywords in blacklist.db to filter unwanted matches.
 
 # Settings
-
-TOR_WRITE = "ON"                                        # Keep magnet URIs in Torrent DB   [ON|OFF]
-
-LOG_WRITE = "ON"					# Keep torrents in history log     [ON|OFF]
-
-DAYS2KEEP = "1"						# Clean history log after x days
-
-BL_FILTER = "ON"					# Activate filter                  [ON|OFF]
-
-ADDMAGNET = "ON"					# Add magnet URIs to transmission  [ON|OFF]
-
-TRAN_HOST = "192.168.2.100"				# Transmission Daemon Host
-
-TRAN_PORT = "9091"					# Transmission Daemon Port
-
-USERNAME  = "transmission"				# Transmission Daemon Username
-
-PASSWORD  = "yourpassword"				# Transmission Daemon Password (base64 encoded)
+| Variable | Option | Description |
+| --- | --- | --- |
+| TOR_WRITE = "ON"            | ON/OFF         |  # Keep magnet URIs in Torrent DB  |
+| LOG_WRITE = "ON"					  | ON/OFF         |  # Keep torrents in history log    |
+| DAYS2KEEP = "1"						  | Integer        |  # Clean history log after x days  |
+| BL_FILTER = "ON"					  | ON/OFF         |  # Activate filter                 |
+| ADDMAGNET = "ON"					  | ON/OFF         |  # Add magnet URIs to transmission |
+| TRAN_HOST = "192.168.2.100" | Server URL     |  # Transmission Daemon Host        |
+| TRAN_PORT = "9091"					| Server Port    |  # Transmission Daemon Port        |
+| USERNAME  = "transmission"	|                |  # Transmission Daemon Username    |
+| PASSWORD  = "yourpassword"	| base64 encoded |  # Transmission Daemon Password    |
 
 
 # Transmission Daemon
